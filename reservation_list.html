@@ -1,0 +1,1203 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>รายการจองห้องพัก</title>
+  <style>
+    body{
+      font-family:"Prompt",Arial,sans-serif;
+      margin:0; padding:0;
+      background:#f4eee7;
+      color:#6b3b1c;
+    }
+    .page{
+      max-width:1080px;
+      margin:0 auto;
+      padding:24px 24px 40px;
+      box-sizing:border-box;
+    }
+    .top-actions{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .back-btn{
+      display:inline-flex; align-items:center; gap:6px;
+      padding:10px 18px;
+      background:#a66a2b; color:#fff;
+      border:none; border-radius:10px;
+      font-size:15px; font-weight:800;
+      cursor:pointer;
+      box-shadow:0 2px 4px rgba(0,0,0,0.15);
+      transition:background .15s ease, transform .15s ease, box-shadow .15s ease;
+    }
+    .back-btn:hover{
+      background:#905825;
+      transform:translateY(-1px);
+      box-shadow:0 4px 8px rgba(0,0,0,0.18);
+    }
+    .print-btn{
+      display:inline-flex; align-items:center; gap:6px;
+      padding:10px 18px;
+      background:#2b3a67; color:#fff;
+      border:none; border-radius:10px;
+      font-size:15px; font-weight:800;
+      cursor:pointer;
+      box-shadow:0 2px 4px rgba(0,0,0,0.15);
+      transition:background .15s ease, transform .15s ease, box-shadow .15s ease;
+    }
+    .print-btn:hover{
+      background:#1f2c50;
+      transform:translateY(-1px);
+      box-shadow:0 4px 8px rgba(0,0,0,0.18);
+    }
+    .title-wrap{
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:26px;
+      margin-bottom:20px;
+    }
+    .title{
+      text-align:center;
+      font-size:30px;
+      font-weight:900;
+      color:#7b4a23;
+      letter-spacing:.2px;
+    }
+    .role-badge{
+      display:inline-block;
+      padding:6px 12px;
+      border-radius:999px;
+      font-size:12px;
+      font-weight:900;
+      background:#f0e2d2;
+      color:#6b3b1c;
+      border:1px solid #e0d2c0;
+    }
+    .card{
+      background:#fff;
+      border-radius:14px;
+      padding:18px 18px 20px;
+      box-shadow:0 6px 18px rgba(0,0,0,0.08);
+      border:1px solid #e0d2c0;
+      margin-bottom:18px;
+    }
+    h2{
+      margin:0 0 10px 0;
+      color:#7b4a23;
+      font-size:18px;
+      border-bottom:1px solid #e7d8c6;
+      padding-bottom:6px;
+      font-weight:900;
+    }
+    label{
+      display:block;
+      margin-top:10px;
+      font-size:13px;
+      color:#4e311a;
+      font-weight:800;
+    }
+    input, select{
+      width:100%;
+      padding:9px 10px;
+      margin-top:4px;
+      box-sizing:border-box;
+      border-radius:10px;
+      border:1px solid #ccbba7;
+      font-size:14px;
+      background:#fff;
+      color:#4e311a;
+      outline:none;
+    }
+    input:focus, select:focus{
+      border-color:#a66a2b;
+      box-shadow:0 0 0 3px rgba(166,106,43,.15);
+    }
+    .row{
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
+      align-items:flex-end;
+    }
+    .row > div{
+      flex:1 1 0;
+      min-width:200px;
+    }
+    .btn{
+      margin-top:10px;
+      padding:10px 18px;
+      background:#a66a2b;
+      color:#fff;
+      border:none;
+      border-radius:10px;
+      font-size:15px;
+      cursor:pointer;
+      font-weight:900;
+      box-shadow:0 2px 6px rgba(0,0,0,0.18);
+      transition:background .15s ease, transform .12s ease, box-shadow .15s ease;
+      width:100%;
+    }
+    .btn:hover{
+      background:#905825;
+      transform:translateY(-1px);
+      box-shadow:0 4px 10px rgba(0,0,0,0.22);
+    }
+    .btn.secondary{ background:#6c757d; }
+    .btn.secondary:hover{ background:#565e64; }
+
+    .note{
+      font-size:12px;
+      color:#7b6a57;
+      margin-top:6px;
+      line-height:1.5;
+    }
+    .warning{
+      font-size:13px;
+      color:#b02a37;
+      margin-top:10px;
+      white-space:pre-line;
+      font-weight:900;
+      display:none;
+      background:#fff5f5;
+      border:1px solid #ffd2d2;
+      padding:10px 12px;
+      border-radius:12px;
+    }
+
+    .print-meta{
+      display:none;
+      margin-top:8px;
+      font-size:12px;
+      color:#555;
+    }
+
+    table{
+      width:100%;
+      border-collapse:separate;
+      border-spacing:0;
+      margin-top:12px;
+      font-size:13px;
+      background:#fff;
+      border-radius:12px;
+      overflow:hidden;
+      border:1px solid #e4d6c4;
+    }
+    th, td{
+      border-bottom:1px solid #e4d6c4;
+      padding:10px 10px;
+      text-align:left;
+      vertical-align:top;
+    }
+    th{
+      background:#f0e2d2;
+      font-weight:900;
+      color:#5b3418;
+    }
+    tr:hover td{ background:#fffaf2; }
+    tr:last-child td{ border-bottom:none; }
+    .muted{ color:#7b6a57; font-size:12px; }
+    .two-line{
+      display:-webkit-box;
+      -webkit-line-clamp:2;
+      -webkit-box-orient:vertical;
+      overflow:hidden;
+    }
+
+    .status-badge{
+      padding:3px 10px;
+      border-radius:999px;
+      font-size:11px;
+      color:#fff;
+      display:inline-block;
+      font-weight:900;
+      letter-spacing:.2px;
+      border:1px solid rgba(0,0,0,.08);
+      white-space:nowrap;
+    }
+    .st-pending{ background:#ffc107; color:#4b3b00; }
+    .st-confirmed{ background:#17a2b8; }
+    .st-checkedin{ background:#1f7a8c; }
+
+    .actions{ display:flex; gap:8px; flex-wrap:wrap; }
+    .btn-mini{
+      padding:7px 10px;
+      font-size:12px;
+      border-radius:10px;
+      border:none;
+      cursor:pointer;
+      font-weight:900;
+      box-shadow:0 1px 3px rgba(0,0,0,0.15);
+      white-space:nowrap;
+    }
+    .btn-mini:disabled{
+      opacity:.55;
+      cursor:not-allowed;
+      box-shadow:none;
+    }
+    .btn-mini.view{ background:#a66a2b; color:#fff; }
+    .btn-mini.checkin{ background:#1f7a8c; color:#fff; }
+    .btn-mini.checkout{ background:#6f42c1; color:#fff; }
+    .btn-mini.cancel{ background:#c0392b; color:#fff; }
+
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding:6px 12px;
+      border-radius:999px;
+      font-size:12px;
+      border:1px solid #e0d2c0;
+      background:#fff7ed;
+      color:#7b4a23;
+      font-weight:900;
+    }
+
+    dialog{
+      border:none;
+      border-radius:20px;
+      max-width:820px;
+      width:calc(100% - 24px);
+      padding:0;
+      box-shadow:0 20px 60px rgba(0,0,0,0.28);
+      overflow:hidden;
+    }
+    dialog::backdrop{
+      background:rgba(0,0,0,.35);
+      backdrop-filter:blur(2px);
+    }
+    .modal-head{
+      padding:16px 18px;
+      background:linear-gradient(135deg,#f0e2d2,#f8eee2);
+      border-bottom:1px solid #e4d6c4;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+    }
+    .modal-title{
+      font-weight:1000;
+      color:#7b4a23;
+      font-size:17px;
+      letter-spacing:.2px;
+    }
+    .modal-body{
+      padding:18px;
+      background:#fff;
+    }
+    .modal-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:12px;
+    }
+    .kv{
+      padding:12px 12px;
+      border:1px solid #eadccc;
+      border-radius:14px;
+      background:linear-gradient(180deg,#fffdf9,#fff8f1);
+      box-shadow:0 2px 6px rgba(0,0,0,.03);
+    }
+    .kv .k{
+      font-size:11px;
+      color:#8a7561;
+      font-weight:900;
+      text-transform:uppercase;
+      letter-spacing:.4px;
+    }
+    .kv .v{
+      margin-top:6px;
+      font-size:14px;
+      font-weight:900;
+      color:#4e311a;
+      white-space:pre-wrap;
+      line-height:1.45;
+    }
+    .modal-foot{
+      padding:14px 18px 18px;
+      display:flex;
+      justify-content:flex-end;
+      gap:10px;
+      background:#fff;
+      border-top:1px solid #f1e6da;
+    }
+    .close-x{
+      border:none;
+      background:transparent;
+      font-size:20px;
+      cursor:pointer;
+      color:#7b4a23;
+      font-weight:1000;
+    }
+
+    .price-box{
+      background:#eef8f0 !important;
+      border-color:#cfe7d3 !important;
+    }
+
+    .pay-box{
+      background:#eef4ff !important;
+      border-color:#d4def7 !important;
+    }
+
+    @media (max-width: 820px){
+      .modal-grid{ grid-template-columns:1fr; }
+    }
+
+    @media print{
+      body{
+        background:#fff;
+        color:#000;
+      }
+
+      .back-btn,
+      .print-btn,
+      .btn,
+      .btn-mini,
+      .role-badge,
+      .warning,
+      dialog{
+        display:none !important;
+      }
+
+      .page{
+        max-width:100%;
+        margin:0;
+        padding:0;
+      }
+
+      .title-wrap{
+        margin-top:0;
+        margin-bottom:12px;
+      }
+
+      .title{
+        font-size:22px;
+        color:#000;
+      }
+
+      .card{
+        box-shadow:none;
+        border:1px solid #bbb;
+        padding:12px;
+        margin-bottom:14px;
+      }
+
+      .print-meta{
+        display:block;
+      }
+
+      input,
+      select,
+      label,
+      #todayLine,
+      #searchBtn,
+      #resetBtn{
+        display:none !important;
+      }
+
+      .row{
+        display:none !important;
+      }
+
+      .note{
+        color:#000;
+      }
+
+      .pill{
+        color:#000;
+        background:#fff;
+        border:1px solid #999;
+      }
+
+      table{
+        border-collapse:collapse;
+        border:1px solid #999;
+        font-size:11px;
+      }
+
+      th, td{
+        border:1px solid #999;
+        padding:6px;
+        color:#000;
+      }
+
+      th{
+        background:#eee !important;
+        color:#000;
+      }
+
+      .status-badge{
+        color:#000 !important;
+        background:#fff !important;
+        border:1px solid #000 !important;
+      }
+
+      .muted{
+        color:#000;
+      }
+
+      /* ซ่อนคอลัมน์ตัวเลือกตอนพิมพ์ */
+      table th:nth-child(8),
+      table td:nth-child(8){
+        display:none !important;
+      }
+
+      tr, td, th{
+        page-break-inside:avoid;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="top-actions">
+      <button class="back-btn" onclick="location.href='reservation_home.html'">
+        <span class="arrow">&larr;</span> กลับเมนูจอง
+      </button>
+
+      <button class="print-btn" onclick="printReservationList()">🖨️ พิมพ์</button>
+    </div>
+
+    <div class="title-wrap">
+      <div class="title">รายการจองห้องพัก</div>
+      <span id="roleBadge" class="role-badge">กำลังตรวจสอบสิทธิ์...</span>
+    </div>
+
+    <div class="card">
+      <h2>ค้นหา / กรองข้อมูล</h2>
+
+      <div class="row">
+        <div>
+          <label>ค้นหาด้วยชื่อลูกค้า</label>
+          <input id="q" placeholder="พิมพ์ชื่อ เช่น Benz">
+        </div>
+
+        <div>
+          <label>สถานะ</label>
+          <select id="statusFilter">
+            <option value="">ทั้งหมด</option>
+            <option value="pending">pending</option>
+            <option value="confirmed">confirmed</option>
+            <option value="checked_in">checked_in</option>
+          </select>
+        </div>
+
+        <div>
+          <label>Check-in ตั้งแต่</label>
+          <input type="date" id="dateFrom">
+        </div>
+
+        <div>
+          <label>ถึง</label>
+          <input type="date" id="dateTo">
+        </div>
+
+        <div style="min-width:200px;">
+          <button class="btn" id="searchBtn" type="button">ค้นหา</button>
+          <button class="btn secondary" id="resetBtn" type="button">ล้างตัวกรอง</button>
+          <div class="note" id="todayLine">วันนี้: -</div>
+        </div>
+      </div>
+
+      <div class="note">
+        staff และ admin สามารถ checkin / checkout ได้ แต่ยกเลิกได้เฉพาะ admin
+      </div>
+
+      <div id="warn" class="warning"></div>
+    </div>
+
+    <div class="card">
+      <h2 style="display:flex; justify-content:space-between; align-items:baseline; gap:10px; flex-wrap:wrap;">
+        <span>ผลลัพธ์</span>
+        <span class="pill" id="resultPill">กำลังโหลด...</span>
+      </h2>
+
+      <div class="print-meta" id="printMeta"></div>
+
+      <div style="overflow:auto; border-radius:12px;">
+        <table>
+          <thead>
+            <tr>
+              <th style="width:120px;">รหัส</th>
+              <th style="width:220px;">ลูกค้า</th>
+              <th style="width:120px;">เบอร์</th>
+              <th style="width:170px;">ช่วงวัน</th>
+              <th style="width:120px;">สถานะ</th>
+              <th style="width:170px;">ประเภทห้อง</th>
+              <th style="width:150px;">ราคา</th>
+              <th style="width:260px;">ตัวเลือก</th>
+            </tr>
+          </thead>
+          <tbody id="tbody">
+            <tr><td colspan="8">กำลังโหลด...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <dialog id="detailDialog">
+    <div class="modal-head">
+      <div class="modal-title" id="modalTitle">รายละเอียดการจอง</div>
+      <button class="close-x" id="closeDialogBtn" aria-label="close">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-grid" id="modalGrid"></div>
+
+      <div style="margin-top:12px;">
+        <div class="kv">
+          <div class="k">รายการประเภทห้อง</div>
+          <div class="v" id="roomsLine">-</div>
+          <div class="muted" style="margin-top:6px;" id="noteLine"></div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn-mini view" id="closeDialogBtn2" type="button">ปิด</button>
+    </div>
+  </dialog>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    const SUPABASE_URL = "https://muebjorbqxuppzaixykg.supabase.co";
+    const SUPABASE_ANON_KEY = "sb_publishable_mybDlaBdUg9SN8nems0_Cg_QiVdgwY_";
+    const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    const tbody = document.getElementById("tbody");
+    const warn = document.getElementById("warn");
+    const resultPill = document.getElementById("resultPill");
+    const todayLine = document.getElementById("todayLine");
+    const roleBadge = document.getElementById("roleBadge");
+
+    const dialog = document.getElementById("detailDialog");
+    const modalTitle = document.getElementById("modalTitle");
+    const modalGrid = document.getElementById("modalGrid");
+    const roomsLine = document.getElementById("roomsLine");
+    const noteLine = document.getElementById("noteLine");
+
+    let latestRows = [];
+    let currentUser = null;
+    let currentUserRole = "viewer";
+
+    function showWarn(msg){
+      warn.style.display = "block";
+      warn.textContent = msg;
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function hideWarn(){
+      warn.style.display = "none";
+      warn.textContent = "";
+    }
+
+    function safe(s){
+      return String(s ?? "").replace(/[<>&"]/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c]));
+    }
+
+    function money(n){
+      const x = Number(n) || 0;
+      return x.toLocaleString("th-TH", { maximumFractionDigits: 2 });
+    }
+
+    function todayISO(){
+      const d = new Date();
+      const y = d.getFullYear();
+      const m = String(d.getMonth()+1).padStart(2,"0");
+      const day = String(d.getDate()).padStart(2,"0");
+      return `${y}-${m}-${day}`;
+    }
+
+    function printReservationList(){
+      const now = new Date();
+      document.getElementById("printMeta").textContent =
+        "พิมพ์เมื่อ: " + now.toLocaleString("th-TH", {
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+          hour: "2-digit",
+          minute: "2-digit"
+        });
+      window.print();
+    }
+
+    function canCheckinToday(checkinDate){
+      if (!checkinDate) return false;
+      return String(checkinDate) <= todayISO();
+    }
+
+    function normalizeQuery(q){
+      return String(q || "").trim();
+    }
+
+    function normalizeRoomType(t){
+      const x = String(t || "").trim().toUpperCase();
+      if (x === "TWN") return "TWIN";
+      return x;
+    }
+
+    function formatRooms(rr){
+      if (!Array.isArray(rr) || rr.length === 0) return "-";
+      return rr.map(x => `${normalizeRoomType(x.room_type || "")} x${Number(x.room_count) || 0}`).join(", ");
+    }
+
+    function buildRoomSummaryLines(rr){
+      if (!Array.isArray(rr) || rr.length === 0) return "-";
+      return rr.map(r => {
+        const roomType = normalizeRoomType(r.room_type || "");
+        const count = Number(r.room_count) || 0;
+        const price = r.price_per_night != null ? money(r.price_per_night) + " บาท/คืน" : "-";
+        const dep = r.deposit != null ? money(r.deposit) + " บาท/ห้อง" : "-";
+        return `• ${roomType} x${count} | ราคา: ${price} | มัดจำ: ${dep}`;
+      }).join("\n");
+    }
+
+    function calcTotalPrice(rr){
+      if (!Array.isArray(rr) || rr.length === 0) return 0;
+      return rr.reduce((sum, x) => {
+        return sum + ((Number(x.price_per_night) || 0) * (Number(x.room_count) || 0));
+      }, 0);
+    }
+
+    function calcTotalDeposit(rr){
+      if (!Array.isArray(rr) || rr.length === 0) return 0;
+      return rr.reduce((sum, x) => {
+        return sum + ((Number(x.deposit) || 0) * (Number(x.room_count) || 0));
+      }, 0);
+    }
+
+    function badge(status){
+      const s = String(status || "").toLowerCase();
+      if (s === "confirmed") return `<span class="status-badge st-confirmed">confirmed</span>`;
+      if (s === "checked_in") return `<span class="status-badge st-checkedin">checked_in</span>`;
+      return `<span class="status-badge st-pending">pending</span>`;
+    }
+
+    function isAdmin(){
+      return currentUserRole === "admin";
+    }
+
+    function canOperateCheckinCheckout(){
+      return currentUserRole === "admin" || currentUserRole === "staff";
+    }
+
+    function updateRoleBadge(){
+      if (currentUserRole === "admin") {
+        roleBadge.textContent = "สิทธิ์: admin";
+        roleBadge.style.background = "#dff3e2";
+        roleBadge.style.color = "#2f7d32";
+      } else if (currentUserRole === "staff") {
+        roleBadge.textContent = "สิทธิ์: staff";
+        roleBadge.style.background = "#fff1d6";
+        roleBadge.style.color = "#9a5b00";
+      } else {
+        roleBadge.textContent = "สิทธิ์: viewer";
+        roleBadge.style.background = "#ececec";
+        roleBadge.style.color = "#666";
+      }
+    }
+
+    async function loadCurrentUserRole() {
+      try {
+        const { data: userData, error: userError } = await db.auth.getUser();
+
+        if (userError) {
+          currentUser = null;
+          currentUserRole = "viewer";
+          updateRoleBadge();
+          return;
+        }
+
+        currentUser = userData?.user || null;
+
+        if (!currentUser) {
+          currentUserRole = "viewer";
+          updateRoleBadge();
+          return;
+        }
+
+        const { data: roleRow, error: roleError } = await db
+          .from("user_roles")
+          .select("role")
+          .eq("user_id", currentUser.id)
+          .maybeSingle();
+
+        if (roleError) {
+          currentUserRole = "viewer";
+          updateRoleBadge();
+          return;
+        }
+
+        currentUserRole = roleRow?.role || "viewer";
+        updateRoleBadge();
+      } catch (e) {
+        currentUser = null;
+        currentUserRole = "viewer";
+        updateRoleBadge();
+      }
+    }
+
+    function goToDailyCheckin(reservation){
+      sessionStorage.setItem("daily_checkin_reservation_id", String(reservation.id));
+      sessionStorage.setItem("daily_checkin_customer_name", reservation.customer_name || "");
+      sessionStorage.setItem("daily_checkin_customer_phone", reservation.customer_phone || "");
+      sessionStorage.setItem("daily_checkin_checkin_date", reservation.check_in_date || "");
+      sessionStorage.setItem("daily_checkin_checkout_date", reservation.check_out_date || "");
+      sessionStorage.setItem("daily_checkin_rooms_summary", formatRooms(reservation.reservation_rooms || []));
+      window.location.href = "daily_checkin.html";
+    }
+
+    async function fetchReservations(){
+      hideWarn();
+      tbody.innerHTML = `<tr><td colspan="8">กำลังโหลด...</td></tr>`;
+      resultPill.textContent = "กำลังโหลด...";
+
+      const q = normalizeQuery(document.getElementById("q").value);
+      const status = document.getElementById("statusFilter").value;
+      const dateFrom = document.getElementById("dateFrom").value || "";
+      const dateTo = document.getElementById("dateTo").value || "";
+
+      let query = db
+        .from("reservations")
+        .select(`
+          id,
+          reservation_code,
+          customer_name,
+          customer_phone,
+          check_in_date,
+          check_out_date,
+          status,
+          note,
+          created_at,
+          reservation_rooms ( room_type, room_count, price_per_night, deposit )
+        `)
+        .in("status", ["pending", "confirmed", "checked_in"])
+        .order("created_at", { ascending:false })
+        .limit(200);
+
+      if (status) query = query.eq("status", status);
+      if (dateFrom) query = query.gte("check_in_date", dateFrom);
+      if (dateTo) query = query.lte("check_in_date", dateTo);
+
+      const { data, error } = await query;
+
+      if (error){
+        console.error(error);
+        showWarn("โหลดข้อมูลไม่สำเร็จ\nรายละเอียด: " + (error.message || ""));
+        tbody.innerHTML = `<tr><td colspan="8">โหลดข้อมูลผิดพลาด</td></tr>`;
+        resultPill.textContent = "ผิดพลาด";
+        return;
+      }
+
+      let rows = data || [];
+
+      if (q){
+        const qLower = q.toLowerCase();
+        rows = rows.filter(r => String(r.customer_name ?? "").toLowerCase().includes(qLower));
+      }
+
+      latestRows = rows;
+      renderTable(rows);
+    }
+
+    function renderTable(rows){
+      const list = rows || [];
+      resultPill.textContent = `พบ ${list.length} รายการ`;
+
+      if (!list.length){
+        tbody.innerHTML = `<tr><td colspan="8">ไม่พบรายการ</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = "";
+
+      list.forEach(r => {
+        const tr = document.createElement("tr");
+
+        const s = String(r.status || "").toLowerCase();
+        const dateReached = canCheckinToday(r.check_in_date);
+
+        const canCheckin = canOperateCheckinCheckout() && (s === "confirmed" || s === "pending") && dateReached;
+        const canCheckout = canOperateCheckinCheckout() && (s === "checked_in");
+        const canCancel = isAdmin() && (s === "pending" || s === "confirmed" || s === "checked_in");
+
+        const totalPrice = calcTotalPrice(r.reservation_rooms);
+        const roomPriceText = totalPrice > 0 ? `${money(totalPrice)} บาท` : "-";
+
+        let actionsHtml = `
+          <button class="btn-mini view" data-act="view" data-id="${r.id}">ดูรายละเอียด</button>
+        `;
+
+        if (canCheckin) {
+          actionsHtml += `<button class="btn-mini checkin" data-act="checkin" data-id="${r.id}">checkin</button>`;
+        }
+
+        if (canCheckout) {
+          actionsHtml += `<button class="btn-mini checkout" data-act="checkout" data-id="${r.id}">checkout</button>`;
+        }
+
+        if (canCancel) {
+          actionsHtml += `<button class="btn-mini cancel" data-act="cancel" data-id="${r.id}">ยกเลิก</button>`;
+        }
+
+        tr.innerHTML = `
+          <td style="font-weight:1000;">${safe(r.reservation_code || r.id)}</td>
+          <td>
+            <div style="font-weight:1000; color:#4e311a;" class="two-line">${safe(r.customer_name||"")}</div>
+          </td>
+          <td>${safe(r.customer_phone||"")}</td>
+          <td>
+            <div style="font-weight:900;">${safe(r.check_in_date||"")} → ${safe(r.check_out_date||"")}</div>
+            ${(!dateReached && (s==="pending" || s==="confirmed")) ? `<div class="muted" style="margin-top:4px;">ยังไม่ถึงวัน check-in</div>` : ``}
+          </td>
+          <td>${badge(r.status)}</td>
+          <td>${safe(formatRooms(r.reservation_rooms))}</td>
+          <td>
+            <div style="font-weight:1000;">${roomPriceText}</div>
+            <div class="muted">รวมตามจำนวนห้อง</div>
+          </td>
+          <td>
+            <div class="actions">${actionsHtml}</div>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    async function openDetails(id){
+      hideWarn();
+
+      const { data, error } = await db
+        .from("reservations")
+        .select(`
+          id,
+          reservation_code,
+          customer_name,
+          customer_phone,
+          check_in_date,
+          check_out_date,
+          status,
+          note,
+          created_at,
+          reservation_rooms ( room_type, room_count, price_per_night, deposit )
+        `)
+        .eq("id", id)
+        .single();
+
+      if (error || !data){
+        console.error(error);
+        showWarn("โหลดรายละเอียดไม่สำเร็จ\nรายละเอียด: " + (error?.message || ""));
+        return;
+      }
+
+      modalTitle.textContent = `รายละเอียดการจอง ${data.reservation_code || "#" + data.id}`;
+      modalGrid.innerHTML = "";
+
+      const roomRows = Array.isArray(data.reservation_rooms) ? data.reservation_rooms : [];
+      const totalRooms = roomRows.reduce((sum, r) => sum + (Number(r.room_count) || 0), 0);
+      const totalBookedPrice = calcTotalPrice(roomRows);
+      const totalBookedDeposit = calcTotalDeposit(roomRows);
+
+      const fields = [
+        ["รหัสการจอง", data.reservation_code || data.id],
+        ["ชื่อลูกค้า", data.customer_name],
+        ["โทรศัพท์", data.customer_phone],
+        ["Check-in", data.check_in_date],
+        ["Check-out", data.check_out_date || "-"],
+        ["สถานะ", String(data.status || "").toLowerCase()],
+        ["จำนวนห้องรวม", totalRooms || 0],
+        ["สร้างเมื่อ", data.created_at ? new Date(data.created_at).toLocaleString("th-TH") : "-"],
+      ];
+
+      fields.forEach(([k,v]) => {
+        const div = document.createElement("div");
+        div.className = "kv";
+        div.innerHTML = `<div class="k">${safe(k)}</div><div class="v">${safe(v ?? "-")}</div>`;
+        modalGrid.appendChild(div);
+      });
+
+      const priceDiv = document.createElement("div");
+      priceDiv.className = "kv price-box";
+      priceDiv.innerHTML = `
+        <div class="k">ราคารวมโดยประมาณ</div>
+        <div class="v">${money(totalBookedPrice)} บาท</div>
+      `;
+      modalGrid.appendChild(priceDiv);
+
+      const payDiv = document.createElement("div");
+      payDiv.className = "kv pay-box";
+      payDiv.innerHTML = `
+        <div class="k">มัดจำรวม</div>
+        <div class="v">${money(totalBookedDeposit)} บาท</div>
+      `;
+      modalGrid.appendChild(payDiv);
+
+      roomsLine.innerHTML = roomRows.length
+        ? roomRows.map(r => {
+            const roomType = normalizeRoomType(r.room_type || "");
+            const count = Number(r.room_count) || 0;
+            const price = r.price_per_night != null ? money(r.price_per_night) + " บาท/คืน" : "-";
+            const dep = r.deposit != null ? money(r.deposit) + " บาท/ห้อง" : "-";
+            return `• ${roomType} x${count} | ราคา: ${price} | มัดจำ: ${dep}`;
+          }).join("\n")
+        : "-";
+
+      noteLine.textContent = data.note ? `หมายเหตุ: ${data.note}` : "";
+      dialog.showModal();
+    }
+
+    async function archiveReservationAndDelete(id, archiveAction){
+      const { data, error } = await db
+        .from("reservations")
+        .select(`
+          id,
+          reservation_code,
+          customer_name,
+          customer_phone,
+          check_in_date,
+          check_out_date,
+          status,
+          note,
+          created_at,
+          reservation_rooms ( room_type, room_count, price_per_night, deposit )
+        `)
+        .eq("id", id)
+        .single();
+
+      if (error || !data){
+        throw new Error("โหลดข้อมูลเพื่อย้ายประวัติไม่สำเร็จ: " + (error?.message || ""));
+      }
+
+      const roomRows = Array.isArray(data.reservation_rooms) ? data.reservation_rooms : [];
+      const roomSummary = buildRoomSummaryLines(roomRows);
+      const totalPrice = calcTotalPrice(roomRows);
+      const totalDeposit = calcTotalDeposit(roomRows);
+
+      const { error: historyError } = await db
+        .from("reservation_history")
+        .insert({
+          original_reservation_id: data.id,
+          reservation_code: data.reservation_code,
+          customer_name: data.customer_name,
+          customer_phone: data.customer_phone,
+          check_in_date: data.check_in_date,
+          check_out_date: data.check_out_date,
+          status_before_archive: data.status,
+          archive_action: archiveAction,
+          archived_at: new Date().toISOString(),
+          archived_by: currentUser?.id || null,
+          note: data.note || "",
+          room_summary: roomSummary,
+          total_price: totalPrice,
+          total_deposit: totalDeposit
+        });
+
+      if (historyError){
+        throw new Error("บันทึกประวัติไม่สำเร็จ: " + historyError.message);
+      }
+
+      const { data: dcRows, error: dcReadError } = await db
+        .from("daily_checkins")
+        .select("room_number")
+        .eq("reservation_id", String(id));
+
+      if (dcReadError){
+        throw new Error("อ่านข้อมูล daily_checkins ไม่สำเร็จ: " + dcReadError.message);
+      }
+
+      const roomNumbers = (dcRows || [])
+        .map(x => String(x.room_number || "").trim())
+        .filter(Boolean);
+
+      const { error: dcDeleteError } = await db
+        .from("daily_checkins")
+        .delete()
+        .eq("reservation_id", String(id));
+
+      if (dcDeleteError){
+        throw new Error("ลบ daily_checkins ไม่สำเร็จ: " + dcDeleteError.message);
+      }
+
+      const { error: roomDeleteError } = await db
+        .from("reservation_rooms")
+        .delete()
+        .eq("reservation_id", id);
+
+      if (roomDeleteError){
+        throw new Error("ลบ reservation_rooms ไม่สำเร็จ: " + roomDeleteError.message);
+      }
+
+      const { error: reservationDeleteError } = await db
+        .from("reservations")
+        .delete()
+        .eq("id", id);
+
+      if (reservationDeleteError){
+        throw new Error("ลบ reservation ไม่สำเร็จ: " + reservationDeleteError.message);
+      }
+
+      if (roomNumbers.length > 0) {
+        const uniqueRooms = [...new Set(roomNumbers)];
+        const { error: roomUpdateError } = await db
+          .from("rooms")
+          .update({ status: "vacant" })
+          .in("room_number", uniqueRooms);
+
+        if (roomUpdateError){
+          throw new Error("อัปเดตสถานะห้องไม่สำเร็จ: " + roomUpdateError.message);
+        }
+      }
+    }
+
+    async function doCheckin(id){
+      if (!canOperateCheckinCheckout()) {
+        showWarn("เฉพาะ staff หรือ admin เท่านั้นที่สามารถ checkin ได้");
+        return;
+      }
+
+      const { data, error } = await db
+        .from("reservations")
+        .select(`
+          id,
+          reservation_code,
+          customer_name,
+          customer_phone,
+          check_in_date,
+          check_out_date,
+          status,
+          reservation_rooms ( room_type, room_count, price_per_night, deposit )
+        `)
+        .eq("id", id)
+        .single();
+
+      if (error || !data){
+        console.error(error);
+        showWarn("โหลดข้อมูลสำหรับ checkin ไม่สำเร็จ\nรายละเอียด: " + (error?.message || ""));
+        return;
+      }
+
+      const s = String(data.status || "").toLowerCase();
+      if (!(s === "pending" || s === "confirmed")){
+        showWarn("ทำ checkin ได้เฉพาะสถานะ pending หรือ confirmed");
+        return;
+      }
+
+      if (!canCheckinToday(data.check_in_date)){
+        showWarn("ยังไม่ถึงวัน Check-in");
+        return;
+      }
+
+      goToDailyCheckin(data);
+    }
+
+    async function doCheckout(reservationId){
+      if (!canOperateCheckinCheckout()) {
+        showWarn("เฉพาะ staff หรือ admin เท่านั้นที่สามารถ checkout ได้");
+        return;
+      }
+
+      hideWarn();
+
+      const dc = await db
+        .from("daily_checkins")
+        .select("room_number, created_at")
+        .eq("reservation_id", String(reservationId))
+        .order("created_at", { ascending:false })
+        .limit(1);
+
+      if (dc.error){
+        console.error(dc.error);
+        showWarn("โหลด room_number ไม่สำเร็จ\n" + (dc.error.message || ""));
+        return;
+      }
+
+      const roomNumber = (dc.data && dc.data.length) ? (dc.data[0].room_number || "") : "";
+
+      if (!roomNumber){
+        showWarn("ไม่พบเลขห้องใน daily_checkins สำหรับ Reservation นี้");
+        return;
+      }
+
+      sessionStorage.setItem("daily_checkout_room", String(roomNumber));
+      sessionStorage.setItem("daily_checkout_reservation_id", String(reservationId));
+      sessionStorage.setItem("daily_checkout_archive_after_success", "1");
+
+      window.location.href =
+        `daily_checkout.html?room=${encodeURIComponent(roomNumber)}&reservation_id=${encodeURIComponent(reservationId)}`;
+    }
+
+    async function doCancel(id){
+      if (!isAdmin()) {
+        showWarn("เฉพาะ admin เท่านั้นที่สามารถยกเลิกการจองได้");
+        return;
+      }
+
+      hideWarn();
+      const ok = confirm('ยืนยันยกเลิกการจอง?\nระบบจะย้ายข้อมูลไปหน้า history และลบออกจากรายการนี้');
+      if (!ok) return;
+
+      try {
+        await archiveReservationAndDelete(id, "cancelled");
+        await fetchReservations();
+      } catch (e) {
+        console.error(e);
+        showWarn("ยกเลิกการจองไม่สำเร็จ\nรายละเอียด: " + e.message);
+      }
+    }
+
+    document.getElementById("searchBtn").addEventListener("click", fetchReservations);
+
+    document.getElementById("resetBtn").addEventListener("click", () => {
+      document.getElementById("q").value = "";
+      document.getElementById("statusFilter").value = "";
+      document.getElementById("dateFrom").value = "";
+      document.getElementById("dateTo").value = "";
+      fetchReservations();
+    });
+
+    document.getElementById("q").addEventListener("keydown", (e) => {
+      if (e.key === "Enter") fetchReservations();
+    });
+
+    tbody.addEventListener("click", async (e) => {
+      const btn = e.target.closest("button");
+      if (!btn) return;
+      const act = btn.dataset.act;
+      const id = btn.dataset.id;
+      if (!act || !id) return;
+
+      if (act === "view") return openDetails(id);
+      if (act === "checkin") return doCheckin(id);
+      if (act === "checkout") return doCheckout(id);
+      if (act === "cancel") return doCancel(id);
+    });
+
+    function closeDialog(d){
+      if (d && d.open) d.close();
+    }
+
+    document.getElementById("closeDialogBtn").addEventListener("click", ()=>closeDialog(dialog));
+    document.getElementById("closeDialogBtn2").addEventListener("click", ()=>closeDialog(dialog));
+
+    dialog.addEventListener("click", (e) => {
+      const rect = dialog.getBoundingClientRect();
+      const inDialog = (
+        e.clientX >= rect.left &&
+        e.clientX <= rect.right &&
+        e.clientY >= rect.top &&
+        e.clientY <= rect.bottom
+      );
+      if (!inDialog) closeDialog(dialog);
+    });
+
+    document.addEventListener("DOMContentLoaded", async () => {
+      todayLine.textContent = "วันนี้: " + todayISO();
+      await loadCurrentUserRole();
+      await fetchReservations();
+    });
+  </script>
+</body>
+</html>

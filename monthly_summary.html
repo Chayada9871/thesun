@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <title>สรุปภาพรวม - ระบบอพาร์ทเมนต์</title>
+  <script src="storage.js"></script>
+  <style>
+    body {
+      font-family: "Prompt", Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f4eee7;
+      color: #6b3b1c;
+    }
+
+    header {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 20px 24px 8px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      box-sizing: border-box;
+      flex-wrap: wrap;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 24px;
+      font-weight: 700;
+      color: #7b4a23;
+    }
+
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      background: #a66a2b;
+      color: #fff;
+      border: none;
+      border-radius: 999px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.18);
+      transition: background 0.15s ease, transform 0.12s ease, box-shadow 0.15s ease;
+    }
+
+    .back-btn span.arrow {
+      font-size: 16px;
+      line-height: 1;
+    }
+
+    .back-btn:hover {
+      background: #905825;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+
+    .print-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      background: #2b3a67;
+      color: #fff;
+      border: none;
+      border-radius: 999px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.18);
+      transition: background 0.15s ease, transform 0.12s ease, box-shadow 0.15s ease;
+    }
+
+    .print-btn:hover {
+      background: #1f2c50;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+
+    .page {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 8px 24px 40px;
+      box-sizing: border-box;
+    }
+
+    .card {
+      background: #ffffff;
+      padding: 18px 18px 20px;
+      border-radius: 10px;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.08);
+      border: 1px solid #e0d2c0;
+      margin-bottom: 16px;
+    }
+
+    .card h2 {
+      margin: 0 0 8px;
+      font-size: 18px;
+      color: #7b4a23;
+    }
+
+    .card p {
+      font-size: 13px;
+      margin: 4px 0 10px;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+    }
+
+    .summary-item {
+      background: #faf7f2;
+      border-radius: 8px;
+      padding: 10px 12px;
+      border: 1px solid #e0d2c0;
+    }
+
+    .summary-label {
+      font-size: 12px;
+      color: #755137;
+    }
+
+    .summary-value {
+      font-size: 20px;
+      font-weight: 700;
+      margin-top: 4px;
+      color: #2b3a67;
+    }
+
+    label {
+      display: inline-block;
+      margin-top: 6px;
+      font-size: 13px;
+      color: #6b3b1c;
+    }
+
+    input, select {
+      padding: 4px 8px;
+      font-size: 13px;
+      margin-left: 4px;
+      border-radius: 4px;
+      border: 1px solid #d6c4ad;
+      background: #fff;
+      box-sizing: border-box;
+    }
+
+    button {
+      margin-top: 8px;
+      padding: 7px 16px;
+      background: #a66a2b;
+      color: white;
+      border: none;
+      border-radius: 999px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.18);
+      transition: background 0.15s ease, transform 0.12s ease, box-shadow 0.15s ease;
+    }
+
+    button:hover {
+      background: #905825;
+      transform: translateY(-1px);
+      box-shadow: 0 3px 6px rgba(0,0,0,0.22);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      font-size: 13px;
+      background: #fff;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    th, td {
+      border: 1px solid #e4d6c4;
+      padding: 8px;
+      text-align: left;
+    }
+
+    th {
+      background: #f0e2d2;
+      font-weight: 600;
+    }
+
+    .small {
+      font-size: 11px;
+      color: #777;
+    }
+
+    .text-right {
+      text-align: right;
+    }
+
+    .text-center {
+      text-align: center;
+    }
+
+    .highlight-negative {
+      color: #c0392b;
+      font-weight: 700;
+    }
+
+    .print-meta {
+      display: none;
+      margin-top: 6px;
+      font-size: 12px;
+      color: #555;
+    }
+
+    @media (max-width: 600px) {
+      header {
+        padding: 16px 16px 4px;
+        flex-wrap: wrap;
+      }
+      .page {
+        padding: 8px 16px 28px;
+      }
+      .card {
+        padding: 14px 14px 18px;
+      }
+      table {
+        font-size: 12px;
+      }
+      th, td {
+        padding: 6px;
+      }
+    }
+
+    @media print {
+      body {
+        background: #ffffff;
+        color: #000000;
+      }
+
+      .back-btn,
+      .print-btn,
+      button,
+      label,
+      input,
+      select {
+        display: none !important;
+      }
+
+      header {
+        max-width: 100%;
+        margin: 0;
+        padding: 0 0 12px 0;
+      }
+
+      header h1 {
+        color: #000;
+        font-size: 20px;
+      }
+
+      .page {
+        max-width: 100%;
+        margin: 0;
+        padding: 0;
+      }
+
+      .card {
+        box-shadow: none;
+        border: none;
+        padding: 0;
+        margin-bottom: 18px;
+      }
+
+      .print-meta {
+        display: block;
+      }
+
+      .summary-item {
+        background: #fff !important;
+        border: 1px solid #999;
+      }
+
+      .summary-label,
+      .summary-value,
+      .small,
+      .highlight-negative {
+        color: #000 !important;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 11px;
+      }
+
+      th, td {
+        border: 1px solid #999;
+        padding: 6px;
+        color: #000;
+      }
+
+      th {
+        background: #eee !important;
+        color: #000;
+      }
+
+      tr, td, th {
+        page-break-inside: avoid;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <button class="back-btn" onclick="location.href='monthly_home.html'">
+      <span class="arrow">&larr;</span>
+      กลับหน้าแรก
+    </button>
+
+    <button class="print-btn" onclick="printSummaryPage()">🖨️ พิมพ์</button>
+
+    <h1>สรุปภาพรวมระบบอพาร์ทเมนต์</h1>
+  </header>
+
+  <div class="page">
+    <div class="card">
+      <h2>สรุปตัวเลขสำคัญ (ถึงวันนี้)</h2>
+      <div class="print-meta" id="printMeta"></div>
+
+      <div class="summary-grid">
+        <div class="summary-item">
+          <div class="summary-label">จำนวนห้องทั้งหมดในระบบ</div>
+          <div class="summary-value" id="totalRooms">0</div>
+        </div>
+        <div class="summary-item">
+          <div class="summary-label">จำนวนห้องที่กำลังเช่าอยู่</div>
+          <div class="summary-value" id="activeRooms">0</div>
+        </div>
+        <div class="summary-item">
+          <div class="summary-label">จำนวนห้องที่สิ้นสุดการเช่าแล้ว</div>
+          <div class="summary-value" id="stoppedRooms">0</div>
+        </div>
+        <div class="summary-item">
+          <div class="summary-label">รายได้จากการชำระเงินทั้งหมด</div>
+          <div class="summary-value" id="totalIncome">0 บาท</div>
+        </div>
+        <div class="summary-item">
+          <div class="summary-label">
+            ยอดค้างชำระรวม (ค่าเช่า + ค่าน้ำ/ไฟ/อื่น ๆ ถึงเดือนปัจจุบัน)
+          </div>
+          <div class="summary-value" id="totalUnpaid">0 บาท</div>
+        </div>
+      </div>
+      <p class="small" style="margin-top:10px;">
+        ยอดค้างชำระรวมคำนวณจากค่าเช่ารายเดือน
+        <strong>บวกกับบิลค่าน้ำ/ค่าไฟ/อื่น ๆ</strong>
+        ตั้งแต่เดือนที่เริ่มเช่าถึงเดือนปัจจุบัน แล้วหักด้วยยอดชำระเงินทั้งหมดของห้องนั้น
+      </p>
+    </div>
+
+    <div class="card">
+      <h2>รายได้รายเดือนตามปีที่เลือก</h2>
+      <div>
+        <label>
+          ปี (ค.ศ.):
+          <input type="number" id="yearInput" style="width:100px;">
+        </label>
+        <button onclick="renderMonthlyIncome()">แสดงรายได้รายเดือน</button>
+      </div>
+      <p class="small">
+        ตารางด้านล่างจะแสดงยอดเงินที่บันทึกในหน้า “บันทึกการชำระเงิน” แยกตามเดือนของปีที่เลือก
+      </p>
+
+      <table id="monthlyTable">
+        <thead>
+          <tr>
+            <th>เดือน</th>
+            <th class="text-right">รายได้รวม (บาท)</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+      <p class="small">
+        หมายเหตุ: เป็นยอดที่บันทึกในระบบเท่านั้น ไม่ได้หักค่าค้างชำระ/เครดิตในตารางนี้
+      </p>
+    </div>
+
+    <div class="card">
+      <h2>ยอดค้างชำระรายห้อง (ห้องที่กำลังเช่าอยู่)</h2>
+      <table id="unpaidTable">
+        <thead>
+          <tr>
+            <th>ห้อง</th>
+            <th>ผู้เช่า</th>
+            <th class="text-right">ค่าเช่าต่อเดือน (บาท)</th>
+            <th class="text-center">จำนวนเดือนที่คิด</th>
+            <th class="text-right">ยอดที่ควรจ่ายรวม</th>
+            <th class="text-right">ยอดที่ชำระแล้วรวม (บาท)</th>
+            <th class="text-right">ยอดค้างชำระ (บาท)</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+      <p class="small">
+        หากยอดค้างชำระเป็น 0 บาท แสดงว่า ณ วันนี้ ห้องนั้นไม่มีหนี้ค้าง
+      </p>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <script>
+    const SUPABASE_URL = "https://muebjorbqxuppzaixykg.supabase.co";
+    const SUPABASE_ANON_KEY = "sb_publishable_mybDlaBdUg9SN8nems0_Cg_QiVdgwY_";
+    const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    let paymentsCache = null;
+
+    function formatMoney(num) {
+      const n = Number(num) || 0;
+      return n.toLocaleString("th-TH", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      });
+    }
+
+    function getPaymentRoom(p) {
+      return String(
+        p.room ??
+        p.room_number ??
+        p.roomNo ??
+        p.roomNumber ??
+        ""
+      );
+    }
+
+    function getPaymentAmount(p) {
+      const raw = p.amount ?? p.paid_amount ?? p.total_amount ?? 0;
+      const amt = parseFloat(raw);
+      return Number.isNaN(amt) ? 0 : amt;
+    }
+
+    function countMonthsInclusive(startDate, endDate) {
+      const y1 = startDate.getFullYear();
+      const m1 = startDate.getMonth();
+      const y2 = endDate.getFullYear();
+      const m2 = endDate.getMonth();
+      return (y2 - y1) * 12 + (m2 - m1) + 1;
+    }
+
+    function printSummaryPage() {
+      const now = new Date();
+      document.getElementById("printMeta").textContent =
+        "พิมพ์เมื่อ: " + now.toLocaleString("th-TH", {
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+          hour: "2-digit",
+          minute: "2-digit"
+        });
+      window.print();
+    }
+
+    async function getAllPayments() {
+      if (paymentsCache) return paymentsCache;
+
+      const { data, error } = await db
+        .from("payments")
+        .select("*");
+
+      if (error) {
+        console.error("payments fetch error:", error);
+        paymentsCache = [];
+        return paymentsCache;
+      }
+
+      paymentsCache = data || [];
+      return paymentsCache;
+    }
+
+    async function initSummary() {
+      const today = new Date();
+
+      let rooms = [];
+      let bookings = [];
+      let extraBills = [];
+
+      try {
+        const [
+          { data: roomRows, error: roomErr },
+          { data: bookingRows, error: bookingErr },
+          { data: extraRows, error: extraErr }
+        ] = await Promise.all([
+          db.from("rooms").select("id, room_number, status"),
+          db.from("bookings").select(`
+            id,
+            room_number,
+            tenant_name,
+            rent_type,
+            checkin_date,
+            checkout_date,
+            stopped_at,
+            lease_duration,
+            status,
+            monthly_rent,
+            created_at,
+            updated_at
+          `).eq("rent_type", "monthly"),
+          db.from("extra_bills").select("*")
+        ]);
+
+        if (roomErr) console.error("rooms error:", roomErr);
+        else rooms = roomRows || [];
+
+        if (bookingErr) console.error("bookings error:", bookingErr);
+        else bookings = bookingRows || [];
+
+        if (extraErr) console.error("extra_bills error:", extraErr);
+        else extraBills = extraRows || [];
+
+      } catch (e) {
+        console.error("initSummary exception:", e);
+      }
+
+      const totalRooms = rooms.length > 0
+        ? rooms.length
+        : new Set(bookings.map(b => b.room_number).filter(Boolean)).size;
+
+      const activeRoomsArr = bookings.filter(t => t.status === "active");
+      const stoppedRoomsArr = bookings.filter(
+        t => t.status === "checked_out" || t.status === "deleted"
+      );
+
+      document.getElementById("totalRooms").textContent = String(totalRooms);
+      document.getElementById("activeRooms").textContent = String(activeRoomsArr.length);
+      document.getElementById("stoppedRooms").textContent = String(stoppedRoomsArr.length);
+
+      const payments = await getAllPayments();
+
+      const totalIncome = payments.reduce((sum, p) => sum + getPaymentAmount(p), 0);
+      document.getElementById("totalIncome").textContent = formatMoney(totalIncome) + " บาท";
+
+      const unpaidTableBody = document.querySelector("#unpaidTable tbody");
+      unpaidTableBody.innerHTML = "";
+      let grandUnpaid = 0;
+
+      activeRoomsArr.forEach(t => {
+        const rent = parseFloat(t.monthly_rent || "0");
+        if (!rent || rent <= 0) return;
+
+        const startStr = t.checkin_date || "";
+        if (!startStr) return;
+
+        const startDate = new Date(startStr + "T00:00:00");
+        if (isNaN(startDate.getTime())) return;
+
+        let endDate = new Date(today.getFullYear(), today.getMonth(), 1);
+
+        if (t.stopped_at) {
+          const stopped = new Date(String(t.stopped_at).split("T")[0] + "T00:00:00");
+          if (!isNaN(stopped.getTime())) {
+            const stoppedMonth = new Date(stopped.getFullYear(), stopped.getMonth(), 1);
+            if (stoppedMonth < endDate) endDate = stoppedMonth;
+          }
+        }
+
+        const firstMonthDate = new Date(startDate.getFullYear(), startDate.getMonth(), 1);
+        if (endDate < firstMonthDate) return;
+
+        const monthsCount = countMonthsInclusive(firstMonthDate, endDate);
+
+        let extraTotal = 0;
+        extraBills.forEach(b => {
+          if (String(b.room || "") !== String(t.room_number || "")) return;
+
+          const by = parseInt(b.year, 10);
+          const bm = parseInt(b.month, 10);
+          if (isNaN(by) || isNaN(bm)) return;
+
+          const billMonthDate = new Date(by, bm - 1, 1);
+          if (billMonthDate < firstMonthDate || billMonthDate > endDate) return;
+
+          const waterBill = Number(b.water || b.water_bill || 0);
+          const elecBill = Number(b.electricity || b.electric || b.electric_bill || 0);
+          const otherBill = Number(b.other || b.other_bill || 0);
+
+          if (!Number.isNaN(waterBill)) extraTotal += waterBill;
+          if (!Number.isNaN(elecBill)) extraTotal += elecBill;
+          if (!Number.isNaN(otherBill)) extraTotal += otherBill;
+        });
+
+        const expectedTotal = rent * monthsCount + extraTotal;
+
+        let paidTotal = 0;
+        payments.forEach(p => {
+          const payRoom = getPaymentRoom(p);
+          if (payRoom !== String(t.room_number || "")) return;
+
+          const py = parseInt(p.year, 10);
+          const pm = parseInt(p.month, 10);
+          if (isNaN(py) || isNaN(pm)) return;
+
+          const payMonthDate = new Date(py, pm - 1, 1);
+          if (payMonthDate > endDate) return;
+
+          paidTotal += getPaymentAmount(p);
+        });
+
+        let unpaid = expectedTotal - paidTotal;
+        if (unpaid < 0) unpaid = 0;
+
+        grandUnpaid += unpaid;
+
+        const tr = document.createElement("tr");
+        const unpaidClass = unpaid > 0 ? "highlight-negative" : "";
+        tr.innerHTML = `
+          <td>${t.room_number || ""}</td>
+          <td>${t.tenant_name || ""}</td>
+          <td class="text-right">${formatMoney(rent)}</td>
+          <td class="text-center">${monthsCount}</td>
+          <td class="text-right">${formatMoney(expectedTotal)}</td>
+          <td class="text-right">${formatMoney(paidTotal)}</td>
+          <td class="text-right ${unpaidClass}">${formatMoney(unpaid)}</td>
+        `;
+        unpaidTableBody.appendChild(tr);
+      });
+
+      if (!unpaidTableBody.hasChildNodes()) {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `<td colspan="7">ไม่มีข้อมูลห้องที่กำลังเช่า</td>`;
+        unpaidTableBody.appendChild(tr);
+      }
+
+      document.getElementById("totalUnpaid").textContent = formatMoney(grandUnpaid) + " บาท";
+
+      const yearInput = document.getElementById("yearInput");
+      yearInput.value = today.getFullYear();
+      await renderMonthlyIncome();
+    }
+
+    async function renderMonthlyIncome() {
+      const tbody = document.querySelector("#monthlyTable tbody");
+      tbody.innerHTML = "";
+
+      const yearStr = document.getElementById("yearInput").value.trim();
+      if (!yearStr) {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `<td colspan="2">กรุณาใส่ปีเพื่อดูรายได้รายเดือน</td>`;
+        tbody.appendChild(tr);
+        return;
+      }
+
+      const year = parseInt(yearStr, 10);
+      if (isNaN(year)) {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `<td colspan="2">รูปแบบปีไม่ถูกต้อง</td>`;
+        tbody.appendChild(tr);
+        return;
+      }
+
+      const payments = await getAllPayments();
+      const monthlySum = {};
+
+      for (let m = 1; m <= 12; m++) monthlySum[m] = 0;
+
+      payments.forEach(p => {
+        const py = parseInt(p.year, 10);
+        const pm = parseInt(p.month, 10);
+        if (py !== year || isNaN(pm)) return;
+
+        const amt = getPaymentAmount(p);
+        if (monthlySum[pm] !== undefined) {
+          monthlySum[pm] += amt;
+        }
+      });
+
+      let totalYearIncome = 0;
+      const monthNames = [
+        "", "มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน",
+        "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"
+      ];
+
+      for (let m = 1; m <= 12; m++) {
+        const val = monthlySum[m] || 0;
+        totalYearIncome += val;
+
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${monthNames[m]} (${String(m).padStart(2, "0")})</td>
+          <td class="text-right">${formatMoney(val)}</td>
+        `;
+        tbody.appendChild(tr);
+      }
+
+      const trTotal = document.createElement("tr");
+      trTotal.innerHTML = `
+        <th>รวมทั้งปี ${year}</th>
+        <th class="text-right">${formatMoney(totalYearIncome)}</th>
+      `;
+      tbody.appendChild(trTotal);
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      initSummary();
+    });
+  </script>
+</body>
+</html>

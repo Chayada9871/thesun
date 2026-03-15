@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <title>ค่าน้ำ / ค่าไฟ / อื่น ๆ - ระบบอพาร์ทเมนต์</title>
+  <script src="storage.js"></script>
+  <style>
+    body {
+      font-family: "Prompt", Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f4eee7;
+      color: #6b3b1c;
+    }
+
+    header {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 20px 24px 8px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 24px;
+      font-weight: 700;
+      color: #7b4a23;
+    }
+
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      background: #a66a2b;
+      color: #fff;
+      border: none;
+      border-radius: 999px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.18);
+      transition: background 0.15s ease, transform 0.12s ease, box-shadow 0.15s ease;
+    }
+
+    .back-btn:hover {
+      background: #905825;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+
+    .back-btn span.arrow {
+      font-size: 16px;
+      line-height: 1;
+    }
+
+    .page {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 8px 24px 40px;
+      box-sizing: border-box;
+    }
+
+    .card {
+      background: #ffffff;
+      padding: 18px 18px 20px;
+      border-radius: 10px;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.08);
+      border: 1px solid #e0d2c0;
+      margin-bottom: 16px;
+    }
+
+    .card h2 {
+      margin: 0 0 8px;
+      font-size: 18px;
+      color: #7b4a23;
+    }
+
+    .card p {
+      font-size: 13px;
+      margin: 4px 0 10px;
+    }
+
+    label {
+      display: block;
+      margin-top: 8px;
+      font-size: 13px;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    input[type="month"],
+    select {
+      width: 100%;
+      padding: 6px 8px;
+      margin-top: 4px;
+      font-size: 13px;
+      border-radius: 4px;
+      border: 1px solid #d6c4ad;
+      box-sizing: border-box;
+      background: #fff;
+    }
+
+    button {
+      margin-top: 12px;
+      padding: 8px 18px;
+      background: #a66a2b;
+      color: #ffffff;
+      border: none;
+      border-radius: 999px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.18);
+      transition: background 0.15s ease, transform 0.12s ease, box-shadow 0.15s ease;
+    }
+
+    button:hover {
+      background: #905825;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.22);
+    }
+
+    .secondary-btn {
+      margin-top: 8px;
+      padding: 7px 14px;
+      border-radius: 999px;
+      background: #f0e2d2;
+      color: #6b3b1c;
+      box-shadow: none;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .secondary-btn:hover {
+      background: #e2d0bc;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+      transform: translateY(-1px);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      font-size: 13px;
+      background: #fff;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    th, td {
+      border: 1px solid #e4d6c4;
+      padding: 8px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background: #f0e2d2;
+      font-weight: 600;
+    }
+
+    .small {
+      font-size: 11px;
+      color: #777;
+    }
+
+    .danger-btn {
+      background: #c0392b;
+      margin-top: 0;
+      padding: 5px 10px;
+      font-size: 11px;
+      color: white;
+      border: none;
+      border-radius: 999px;
+      cursor: pointer;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.18);
+    }
+
+    .danger-btn:hover {
+      background: #a12f22;
+      transform: translateY(-1px);
+      box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+    }
+
+    .time-highlight {
+      font-weight: 600;
+      color: #2b3a67;
+      font-size: 12px;
+    }
+
+    @media (max-width: 600px) {
+      header {
+        padding: 16px 16px 4px;
+        flex-wrap: wrap;
+      }
+      .page {
+        padding: 8px 16px 28px;
+      }
+      .card {
+        padding: 14px 14px 18px;
+      }
+      table {
+        font-size: 12px;
+      }
+      th, td {
+        padding: 6px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <button class="back-btn" onclick="location.href='monthly_home.html'">
+      <span class="arrow">&larr;</span>
+      กลับหน้าหลัก
+    </button>
+    <h1>ค่าน้ำ / ค่าไฟ / อื่น ๆ</h1>
+  </header>
+
+  <div class="page">
+    <div class="card">
+      <h2>บันทึก / แก้ไขค่าใช้จ่ายรายห้อง</h2>
+      <p class="small">
+        เลือกห้องที่กำลังเช่าอยู่ และเลือกเดือน/ปีที่ต้องการบันทึกค่าน้ำ ค่าไฟ และค่าใช้จ่ายอื่น ๆ<br>
+        1 ห้อง ใน 1 เดือน/ปี จะบันทึกได้เพียง <strong>1 รายการ</strong> หากต้องการแก้ไขให้ใช้ปุ่ม “แก้ไข”
+      </p>
+
+      <p class="small" id="editInfo" style="color:#c0392b; display:none;">
+        กำลังแก้ไขรายการเดิมอยู่ หากต้องการยกเลิกการแก้ไข กดปุ่ม "ยกเลิกการแก้ไข"
+      </p>
+
+      <label>ห้องที่ต้องการบันทึก</label>
+      <select id="roomSelect"></select>
+
+      <label>เดือน / ปี ที่คิดค่าใช้จ่าย</label>
+      <input type="month" id="billMonth">
+
+      <label>ค่าไฟฟ้า (บาท)</label>
+      <input type="number" id="electricity" placeholder="เช่น 800" min="0" step="0.01">
+
+      <label>ค่าน้ำ (บาท)</label>
+      <input type="number" id="water" placeholder="เช่น 200" min="0" step="0.01">
+
+      <label>ค่าใช้จ่ายอื่น ๆ (บาท)</label>
+      <input type="number" id="other" placeholder="เช่น 150" min="0" step="0.01">
+
+      <button id="saveBtn" onclick="saveUtilityBill()">บันทึกค่าใช้จ่าย</button>
+      <button id="cancelEditBtn" class="secondary-btn" style="display:none;" onclick="cancelEdit()">ยกเลิกการแก้ไข</button>
+
+      <p id="message" style="color: green; margin-top: 8px; font-size: 13px;"></p>
+    </div>
+
+    <div class="card">
+      <h2>รายการค่าใช้จ่ายที่บันทึกแล้ว</h2>
+
+      <label>กรองตามห้อง (เว้นว่าง = แสดงทุกห้อง)</label>
+      <input type="text" id="filterRoom" placeholder="เช่น 301">
+      <button class="secondary-btn" onclick="renderUtilityBills()">แสดงรายการ</button>
+
+      <table id="utilityTable">
+        <thead>
+          <tr>
+            <th>ห้อง</th>
+            <th>เดือน/ปี</th>
+            <th>ไฟฟ้า</th>
+            <th>น้ำ</th>
+            <th>อื่น ๆ</th>
+            <th>รวม (บาท)</th>
+            <th>บันทึกเมื่อ</th>
+            <th>จัดการ</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+
+      <p class="small">
+        ถ้าบันทึกผิด สามารถกดปุ่ม “ลบ” เพื่อลบรายการนั้นออกจากระบบ หรือกดปุ่ม “แก้ไข” เพื่อแก้ไขตัวเลขได้
+      </p>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <script>
+    const SUPABASE_URL = "https://muebjorbqxuppzaixykg.supabase.co";
+    const SUPABASE_ANON_KEY = "sb_publishable_mybDlaBdUg9SN8nems0_Cg_QiVdgwY_";
+    const TABLE_NAME = "extra_bills";
+
+    const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    let editingBillId = null;
+    let currentBills = [];
+
+    function formatDateTime(value) {
+      if (!value) return "-";
+      const d = new Date(value);
+      if (isNaN(d.getTime())) return String(value);
+      return d.toLocaleString("th-TH", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit"
+      });
+    }
+
+    function setDefaultMonth() {
+      const monthInput = document.getElementById("billMonth");
+      if (monthInput) {
+        const now = new Date();
+        const y = now.getFullYear();
+        const m = String(now.getMonth() + 1).padStart(2, "0");
+        monthInput.value = `${y}-${m}`;
+      }
+    }
+
+    async function populateRoomSelect() {
+      const select = document.getElementById("roomSelect");
+      select.innerHTML = "";
+
+      try {
+        const { data, error } = await db
+          .from("bookings")
+          .select(`
+            id,
+            room_number,
+            tenant_name,
+            rent_type,
+            status
+          `)
+          .eq("rent_type", "monthly")
+          .eq("status", "active");
+
+        if (error) {
+          console.error("populateRoomSelect error:", error);
+          const opt = document.createElement("option");
+          opt.value = "";
+          opt.textContent = "ดึงข้อมูลห้องไม่ได้: " + (error.message || "");
+          select.appendChild(opt);
+          select.disabled = true;
+          return;
+        }
+
+        if (!data || data.length === 0) {
+          const opt = document.createElement("option");
+          opt.value = "";
+          opt.textContent = "ไม่มีห้องที่กำลังเช่าอยู่ในระบบ";
+          select.appendChild(opt);
+          select.disabled = true;
+          return;
+        }
+
+        const defaultOpt = document.createElement("option");
+        defaultOpt.value = "";
+        defaultOpt.textContent = "-- เลือกห้อง --";
+        select.appendChild(defaultOpt);
+        select.disabled = false;
+
+        const roomList = data
+          .map(bk => ({
+            room_number: bk.room_number || "",
+            guest_name: bk.tenant_name || ""
+          }))
+          .filter(r => r.room_number);
+
+        roomList.sort((a, b) => a.room_number.localeCompare(b.room_number, "th"));
+
+        roomList.forEach(r => {
+          const opt = document.createElement("option");
+          opt.value = r.room_number;
+          opt.textContent = `${r.room_number} - ${r.guest_name || "-"}`;
+          select.appendChild(opt);
+        });
+
+      } catch (e) {
+        console.error("populateRoomSelect exception:", e);
+        const opt = document.createElement("option");
+        opt.value = "";
+        opt.textContent = "เกิดข้อผิดพลาดในการโหลดห้อง";
+        select.appendChild(opt);
+        select.disabled = true;
+      }
+    }
+
+    async function saveUtilityBill() {
+      const room = document.getElementById("roomSelect").value;
+      const billMonth = document.getElementById("billMonth").value;
+      const elecStr = document.getElementById("electricity").value.trim();
+      const waterStr = document.getElementById("water").value.trim();
+      const otherStr = document.getElementById("other").value.trim();
+      const msg = document.getElementById("message");
+
+      msg.textContent = "";
+      msg.style.color = "red";
+
+      if (!room) {
+        msg.textContent = "กรุณาเลือกห้องที่ต้องการบันทึก";
+        return;
+      }
+      if (!billMonth) {
+        msg.textContent = "กรุณาเลือกเดือน/ปี ที่ต้องการบันทึกค่าใช้จ่าย";
+        return;
+      }
+
+      const elec = parseFloat(elecStr || "0");
+      const water = parseFloat(waterStr || "0");
+      const other = parseFloat(otherStr || "0");
+
+      if (elec <= 0 && water <= 0 && other <= 0) {
+        msg.textContent = "กรุณากรอกอย่างน้อย 1 รายการให้มีค่ามากกว่า 0";
+        return;
+      }
+
+      const [yearStr, monthStr] = billMonth.split("-");
+      const year = parseInt(yearStr, 10);
+      const month = parseInt(monthStr, 10);
+      const total = elec + water + other;
+
+      try {
+        const { data: dupRows, error: dupErr } = await db
+          .from(TABLE_NAME)
+          .select("id")
+          .eq("room", room)
+          .eq("year", year)
+          .eq("month", month);
+
+        if (dupErr) {
+          console.error("duplicate check error:", dupErr);
+          msg.textContent = "เกิดข้อผิดพลาดขณะตรวจสอบข้อมูลซ้ำ: " + (dupErr.message || "");
+          return;
+        }
+
+        if (editingBillId === null) {
+          if (dupRows && dupRows.length > 0) {
+            msg.textContent = "ห้องนี้มีการบันทึกค่าใช้จ่ายในเดือน/ปีนี้แล้ว กรุณาใช้ปุ่ม 'แก้ไข' แทนการบันทึกใหม่";
+            return;
+          }
+        } else {
+          const conflict = (dupRows || []).find(r => r.id !== editingBillId);
+          if (conflict) {
+            msg.textContent = "มีรายการอื่นของห้องนี้ในเดือน/ปีนี้อยู่แล้ว ไม่สามารถเปลี่ยนให้ซ้ำกันได้";
+            return;
+          }
+        }
+
+        if (editingBillId !== null) {
+          const { error } = await db
+            .from(TABLE_NAME)
+            .update({
+              room,
+              year,
+              month,
+              electricity: elec,
+              water,
+              other,
+              total,
+              updated_at: new Date().toISOString()
+            })
+            .eq("id", editingBillId);
+
+          if (error) {
+            console.error("update error:", error);
+            msg.textContent = "เกิดข้อผิดพลาดขณะอัปเดตค่าใช้จ่าย: " + (error.message || "");
+            return;
+          }
+
+          msg.style.color = "green";
+          msg.textContent = "แก้ไขค่าใช้จ่ายเรียบร้อยแล้ว";
+        } else {
+          const { error } = await db
+            .from(TABLE_NAME)
+            .insert({
+              room,
+              year,
+              month,
+              electricity: elec,
+              water,
+              other,
+              total
+            });
+
+          if (error) {
+            console.error("insert error:", error);
+            msg.textContent = "เกิดข้อผิดพลาดขณะบันทึกค่าใช้จ่าย: " + (error.message || "");
+            return;
+          }
+
+          msg.style.color = "green";
+          msg.textContent = "บันทึกค่าใช้จ่ายเรียบร้อยแล้ว";
+        }
+
+        resetForm();
+        await renderUtilityBills();
+
+      } catch (e) {
+        console.error("saveUtilityBill exception:", e);
+        msg.textContent = "เกิดข้อผิดพลาดขณะบันทึกค่าใช้จ่าย";
+      }
+    }
+
+    function resetForm() {
+      editingBillId = null;
+      document.getElementById("roomSelect").value = "";
+      document.getElementById("electricity").value = "";
+      document.getElementById("water").value = "";
+      document.getElementById("other").value = "";
+      document.getElementById("saveBtn").textContent = "บันทึกค่าใช้จ่าย";
+      document.getElementById("editInfo").style.display = "none";
+      document.getElementById("cancelEditBtn").style.display = "none";
+      setDefaultMonth();
+    }
+
+    function cancelEdit() {
+      resetForm();
+      document.getElementById("message").textContent = "";
+    }
+
+    async function deleteUtilityBill(id) {
+      if (!confirm("ต้องการลบรายการนี้หรือไม่?")) return;
+
+      try {
+        const { error } = await db
+          .from(TABLE_NAME)
+          .delete()
+          .eq("id", id);
+
+        if (error) {
+          console.error("deleteUtilityBill error:", error);
+          alert("เกิดข้อผิดพลาดขณะลบรายการค่าใช้จ่าย: " + (error.message || ""));
+          return;
+        }
+
+        if (editingBillId === id) {
+          resetForm();
+        }
+
+        await renderUtilityBills();
+
+      } catch (e) {
+        console.error("deleteUtilityBill exception:", e);
+        alert("เกิดข้อผิดพลาดขณะลบรายการค่าใช้จ่าย");
+      }
+    }
+
+    function editUtilityBill(id) {
+      const bill = currentBills.find(b => b.id === id);
+      if (!bill) return;
+
+      editingBillId = id;
+
+      populateRoomSelect().then(() => {
+        const roomSelect = document.getElementById("roomSelect");
+        if (![...roomSelect.options].some(o => o.value === bill.room)) {
+          const opt = document.createElement("option");
+          opt.value = bill.room;
+          opt.textContent = `${bill.room} (เลิกเช่าแล้ว)`;
+          roomSelect.appendChild(opt);
+        }
+        roomSelect.value = bill.room;
+      });
+
+      document.getElementById("billMonth").value =
+        `${bill.year}-${String(bill.month).padStart(2, "0")}`;
+      document.getElementById("electricity").value = bill.electricity || 0;
+      document.getElementById("water").value = bill.water || 0;
+      document.getElementById("other").value = bill.other || 0;
+
+      document.getElementById("saveBtn").textContent = "อัปเดตค่าใช้จ่าย";
+      document.getElementById("editInfo").style.display = "block";
+      document.getElementById("cancelEditBtn").style.display = "inline-block";
+      document.getElementById("message").textContent = "";
+    }
+
+    async function renderUtilityBills() {
+      const tbody = document.querySelector("#utilityTable tbody");
+      tbody.innerHTML = "";
+
+      const filterRoom = document.getElementById("filterRoom").value.trim();
+
+      try {
+        const { data, error } = await db
+          .from(TABLE_NAME)
+          .select("*")
+          .order("created_at", { ascending: false });
+
+        if (error) {
+          console.error("renderUtilityBills error:", error);
+          const tr = document.createElement("tr");
+          tr.innerHTML = `<td colspan="8" style="color:red;">ไม่สามารถดึงข้อมูลค่าใช้จ่ายได้: ${error.message || ""}</td>`;
+          tbody.appendChild(tr);
+          return;
+        }
+
+        if (!data || data.length === 0) {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `<td colspan="8">ยังไม่มีข้อมูลค่าใช้จ่าย</td>`;
+          tbody.appendChild(tr);
+          currentBills = [];
+          return;
+        }
+
+        currentBills = data.slice();
+
+        let bills = data;
+        if (filterRoom) {
+          bills = bills.filter(b => String(b.room || "") === filterRoom);
+        }
+
+        if (bills.length === 0) {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `<td colspan="8">ไม่พบข้อมูลค่าใช้จ่ายของห้องนี้</td>`;
+          tbody.appendChild(tr);
+          return;
+        }
+
+        bills.forEach(b => {
+          const ym = `${String(b.month).padStart(2, "0")}/${b.year}`;
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td>${b.room || "-"}</td>
+            <td>${ym}</td>
+            <td>${Number(b.electricity || 0).toFixed(2)}</td>
+            <td>${Number(b.water || 0).toFixed(2)}</td>
+            <td>${Number(b.other || 0).toFixed(2)}</td>
+            <td><strong>${Number(b.total || 0).toFixed(2)}</strong></td>
+            <td class="time-highlight">${formatDateTime(b.updated_at || b.created_at)}</td>
+            <td>
+              <button onclick="editUtilityBill(${b.id})">แก้ไข</button>
+              <button class="danger-btn" onclick="deleteUtilityBill(${b.id})">ลบ</button>
+            </td>
+          `;
+          tbody.appendChild(tr);
+        });
+
+      } catch (e) {
+        console.error("renderUtilityBills exception:", e);
+        const tr = document.createElement("tr");
+        tr.innerHTML = `<td colspan="8" style="color:red;">เกิดข้อผิดพลาดขณะโหลดข้อมูลค่าใช้จ่าย</td>`;
+        tbody.appendChild(tr);
+      }
+    }
+
+    (function initPage() {
+      populateRoomSelect();
+      setDefaultMonth();
+      renderUtilityBills();
+    })();
+  </script>
+</body>
+</html>

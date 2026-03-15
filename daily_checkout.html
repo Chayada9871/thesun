@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>บันทึก Check-out รายวัน</title>
+  <style>
+    body{
+      font-family:"Prompt",Arial,sans-serif;
+      margin:0; padding:0;
+      background:#f4eee7;
+      color:#6b3b1c;
+    }
+    .page{
+      max-width:980px;
+      margin:0 auto;
+      padding:24px 24px 40px;
+      box-sizing:border-box;
+    }
+    .back-btn{
+      display:inline-flex; align-items:center; gap:6px;
+      padding:10px 18px;
+      background:#a66a2b; color:#fff;
+      border:none; border-radius:10px;
+      font-size:15px; font-weight:800;
+      cursor:pointer;
+      box-shadow:0 2px 4px rgba(0,0,0,0.15);
+      transition:background .15s ease, transform .15s ease, box-shadow .15s ease;
+    }
+    .back-btn:hover{
+      background:#905825;
+      transform:translateY(-1px);
+      box-shadow:0 4px 8px rgba(0,0,0,0.18);
+    }
+    .title{
+      text-align:center;
+      margin-top:26px;
+      margin-bottom:20px;
+      font-size:30px;
+      font-weight:900;
+      color:#7b4a23;
+    }
+    .card{
+      background:#fff;
+      border-radius:14px;
+      padding:18px 18px 20px;
+      box-shadow:0 6px 18px rgba(0,0,0,0.08);
+      border:1px solid #e0d2c0;
+      margin-bottom:18px;
+    }
+    h2{
+      margin:0 0 10px 0;
+      color:#7b4a23;
+      font-size:18px;
+      border-bottom:1px solid #e7d8c6;
+      padding-bottom:6px;
+      font-weight:900;
+    }
+    label{
+      display:block;
+      margin-top:10px;
+      font-size:13px;
+      color:#4e311a;
+      font-weight:800;
+    }
+    input, textarea{
+      width:100%;
+      padding:9px 10px;
+      margin-top:4px;
+      box-sizing:border-box;
+      border-radius:10px;
+      border:1px solid #ccbba7;
+      font-size:14px;
+      background:#fff;
+      color:#4e311a;
+      outline:none;
+    }
+    input:focus, textarea:focus{
+      border-color:#a66a2b;
+      box-shadow:0 0 0 3px rgba(166,106,43,.15);
+    }
+    input[readonly]{
+      background:#f8f1e8;
+      color:#7b6a57;
+    }
+    .row{
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
+      align-items:flex-end;
+    }
+    .row > div{
+      flex:1 1 0;
+      min-width:210px;
+    }
+    .note{
+      font-size:12px;
+      color:#7b6a57;
+      margin-top:6px;
+      line-height:1.5;
+    }
+    .warning{
+      font-size:13px;
+      color:#b02a37;
+      margin-top:10px;
+      white-space:pre-line;
+      font-weight:900;
+      display:none;
+      background:#fff5f5;
+      border:1px solid #ffd2d2;
+      padding:10px 12px;
+      border-radius:12px;
+    }
+    .summary-box{
+      margin-top:16px;
+      background:#f7f9ff;
+      border-radius:12px;
+      padding:12px 14px;
+      font-size:14px;
+      line-height:1.6;
+      border:1px solid #dde3ff;
+      color:#253159;
+      display:none;
+    }
+    .btn{
+      margin-top:12px;
+      padding:10px 18px;
+      background:#a66a2b;
+      color:#fff;
+      border:none;
+      border-radius:10px;
+      font-size:15px;
+      cursor:pointer;
+      font-weight:900;
+      box-shadow:0 2px 6px rgba(0,0,0,0.18);
+      transition:background .15s ease, transform .12s ease, box-shadow .15s ease;
+      width:100%;
+    }
+    .btn:hover{
+      background:#905825;
+      transform:translateY(-1px);
+      box-shadow:0 4px 10px rgba(0,0,0,0.22);
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <button class="back-btn" onclick="location.href='daily_home.html'">
+      <span class="arrow">&larr;</span> กลับเมนูรายวัน
+    </button>
+
+    <div class="title">บันทึก Check-out (รายวัน)</div>
+
+    <div class="card">
+      <h2>ข้อมูลอ้างอิง</h2>
+
+      <div class="row">
+        <div>
+          <label>Reservation ID</label>
+          <input id="infoReservationId" readonly>
+        </div>
+        <div>
+          <label>เลขห้อง (จาก daily_checkins ล่าสุด)</label>
+          <input id="infoRoom" readonly>
+        </div>
+      </div>
+
+      <div class="row">
+        <div>
+          <label>ชื่อลูกค้า</label>
+          <input id="infoGuest" readonly>
+        </div>
+        <div>
+          <label>วันที่ Check-in (จาก reservations)</label>
+          <input id="infoCheckin" type="date" readonly>
+        </div>
+      </div>
+
+      <div class="row">
+        <div>
+          <label>ราคา/คืน</label>
+          <input id="infoPrice" type="number" step="0.01" min="0" value="0" readonly>
+        </div>
+        <div>
+          <label>ชำระค่าห้องตอน Check-in แล้ว</label>
+          <input id="infoDeposit" type="number" step="0.01" min="0" value="0" readonly>
+        </div>
+      </div>
+
+      <div class="note">
+        หน้านี้จะบันทึกเฉพาะค่าใช้จ่ายเพิ่มเติมตอน Check-out เท่านั้น ไม่คิดค่าห้องซ้ำ
+      </div>
+
+      <div id="warn" class="warning"></div>
+    </div>
+
+    <div class="card">
+      <h2>รายละเอียด Check-out</h2>
+
+      <div class="row">
+        <div>
+          <label>วันที่ Check-out *</label>
+          <input type="date" id="checkOutDate">
+        </div>
+        <div>
+          <label>ค่าใช้จ่ายเพิ่มเติม (ถ้ามี)</label>
+          <input type="number" id="extraCharge" min="0" step="0.01" value="0">
+        </div>
+      </div>
+
+      <label>หมายเหตุเพิ่มเติม</label>
+      <textarea id="extraNote" rows="2"></textarea>
+
+      <div class="summary-box" id="summaryBox">
+        <div><b>จำนวนคืน:</b> <span id="sumNights"></span> คืน</div>
+        <div><b>ค่าห้อง:</b> <span id="sumRoom"></span> บาท <span style="color:#2e7d32;">(ชำระแล้วตอน Check-in)</span></div>
+        <div><b>ค่าใช้จ่ายเพิ่มเติม:</b> <span id="sumExtra"></span> บาท</div>
+        <div><b>รวมที่ต้องชำระเพิ่มตอน Check-out:</b> <span id="sumTotal"></span> บาท</div>
+        <div><b>ชำระตอน Check-in:</b> <span id="sumDeposit"></span> บาท</div>
+        <div><b>ยอดสุทธิที่ต้องเก็บเพิ่ม:</b> <span id="sumNet"></span> บาท</div>
+      </div>
+
+      <button class="btn" id="calcBtn" type="button">คำนวณ</button>
+      <button class="btn" id="saveBtn" type="button">บันทึก Check-out</button>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    const SUPABASE_URL = "https://muebjorbqxuppzaixykg.supabase.co";
+    const SUPABASE_ANON_KEY = "sb_publishable_mybDlaBdUg9SN8nems0_Cg_QiVdgwY_";
+    const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    const warn = document.getElementById("warn");
+
+    const infoReservationId = document.getElementById("infoReservationId");
+    const infoRoom = document.getElementById("infoRoom");
+    const infoGuest = document.getElementById("infoGuest");
+    const infoCheckin = document.getElementById("infoCheckin");
+    const infoPrice = document.getElementById("infoPrice");
+    const infoDeposit = document.getElementById("infoDeposit");
+
+    const checkOutDateEl = document.getElementById("checkOutDate");
+    const extraChargeEl = document.getElementById("extraCharge");
+    const extraNoteEl = document.getElementById("extraNote");
+
+    const summary = document.getElementById("summaryBox");
+    const sumNights = document.getElementById("sumNights");
+    const sumRoom = document.getElementById("sumRoom");
+    const sumExtra = document.getElementById("sumExtra");
+    const sumTotal = document.getElementById("sumTotal");
+    const sumDeposit = document.getElementById("sumDeposit");
+    const sumNet = document.getElementById("sumNet");
+
+    const calcBtn = document.getElementById("calcBtn");
+    const saveBtn = document.getElementById("saveBtn");
+
+    let latestCheckinRow = null;
+    let reservationData = null;
+
+    function showWarn(msg){
+      warn.style.display = "block";
+      warn.textContent = msg;
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function hideWarn(){
+      warn.style.display = "none";
+      warn.textContent = "";
+    }
+
+    function money(n){
+      const x = Number(n) || 0;
+      return x.toLocaleString("th-TH", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      });
+    }
+
+    function todayISO(){
+      const d = new Date();
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, "0");
+      const day = String(d.getDate()).padStart(2, "0");
+      return `${y}-${m}-${day}`;
+    }
+
+    function getQueryParam(name){
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get(name);
+    }
+
+    function calcNights(checkInStr, checkOutStr){
+      const inDate = new Date(checkInStr + "T00:00:00");
+      const outDate = new Date(checkOutStr + "T00:00:00");
+      const diffMs = outDate - inDate;
+      const diffDays = diffMs / (1000 * 60 * 60 * 24);
+      return diffDays < 1 ? 1 : Math.round(diffDays);
+    }
+
+    async function loadInitial(){
+      hideWarn();
+
+      const reservationId =
+        getQueryParam("reservation_id") ||
+        sessionStorage.getItem("daily_checkout_reservation_id") ||
+        "";
+
+      infoReservationId.value = reservationId ? String(reservationId) : "";
+      checkOutDateEl.value = todayISO();
+
+      if (!reservationId){
+        showWarn("ไม่พบ reservation_id ที่ส่งมาจาก reservation_list");
+        return;
+      }
+
+      const r = await db
+        .from("reservations")
+        .select("*")
+        .eq("id", reservationId)
+        .single();
+
+      if (r.error){
+        console.error(r.error);
+        showWarn("โหลดข้อมูล reservations ไม่สำเร็จ\n" + (r.error.message || ""));
+      } else if (r.data){
+        reservationData = r.data;
+
+        infoGuest.value =
+          r.data.customer_name ||
+          r.data.tenant_name ||
+          r.data.guest_name ||
+          "";
+
+        infoCheckin.value =
+          r.data.check_in_date ||
+          r.data.checkin_date ||
+          "";
+
+        const price =
+          Number(r.data.price_per_night || 0);
+
+        const paidAtCheckin =
+          Number(r.data.deposit || 0) ||
+          Number(r.data.paid_amount || 0) ||
+          Number(r.data.total_amount || 0) ||
+          Number(r.data.total_price || 0) ||
+          0;
+
+        infoPrice.value = price;
+        infoDeposit.value = paidAtCheckin;
+      }
+
+      const dc = await db
+        .from("daily_checkins")
+        .select("id, room_number, guest_name, check_in_at, check_out_at, is_active, created_at")
+        .eq("reservation_id", reservationId)
+        .eq("is_active", true)
+        .order("created_at", { ascending: false })
+        .limit(1);
+
+      if (dc.error){
+        console.error(dc.error);
+        showWarn("โหลดข้อมูล daily_checkins ไม่สำเร็จ\n" + (dc.error.message || ""));
+        return;
+      }
+
+      if (dc.data && dc.data.length){
+        latestCheckinRow = dc.data[0];
+        infoRoom.value = String(latestCheckinRow.room_number || "");
+        if (!infoGuest.value) infoGuest.value = latestCheckinRow.guest_name || "";
+      } else {
+        const roomFromQuery =
+          getQueryParam("room") ||
+          sessionStorage.getItem("daily_checkout_room") ||
+          "";
+
+        if (roomFromQuery) infoRoom.value = String(roomFromQuery);
+      }
+
+      if (!infoPrice.value) infoPrice.value = "0";
+      if (!infoDeposit.value) infoDeposit.value = "0";
+    }
+
+    function calcAndShow(){
+      hideWarn();
+
+      const reservationId = infoReservationId.value.trim();
+      const roomNumber = infoRoom.value.trim();
+      const guestName = infoGuest.value.trim();
+      const checkinDate = infoCheckin.value;
+      const checkoutDate = checkOutDateEl.value;
+
+      const pricePerNight = Number(infoPrice.value || 0);
+      const paidAtCheckin = Number(infoDeposit.value || 0);
+      const extraCharge = Number(extraChargeEl.value || 0);
+
+      if (!reservationId){
+        showWarn("ไม่พบ Reservation ID");
+        return null;
+      }
+
+      if (!roomNumber){
+        showWarn("กรุณาใส่เลขห้อง");
+        return null;
+      }
+
+      if (!guestName){
+        showWarn("กรุณาใส่ชื่อลูกค้า");
+        return null;
+      }
+
+      if (!checkinDate){
+        showWarn("กรุณาใส่วันที่ Check-in");
+        return null;
+      }
+
+      if (!checkoutDate){
+        showWarn("กรุณาเลือกวันที่ Check-out");
+        return null;
+      }
+
+      if (String(checkoutDate) < String(checkinDate)){
+        showWarn("วันที่ Check-out ต้องไม่ก่อนวัน Check-in");
+        return null;
+      }
+
+      const nights = calcNights(checkinDate, checkoutDate);
+      const roomCharge = nights * pricePerNight;
+
+      // ตอน checkout เก็บเฉพาะค่าใช้จ่ายเพิ่มเติม
+      const total = extraCharge;
+      const net = extraCharge;
+
+      sumNights.textContent = String(nights);
+      sumRoom.textContent = money(roomCharge);
+      sumExtra.textContent = money(extraCharge);
+      sumTotal.textContent = money(total);
+      sumDeposit.textContent = money(paidAtCheckin);
+      sumNet.textContent = money(net);
+
+      summary.style.display = "block";
+
+      return {
+        reservationId,
+        roomNumber,
+        guestName,
+        checkinDate,
+        checkoutDate,
+        pricePerNight,
+        paidAtCheckin,
+        extraCharge,
+        nights,
+        roomCharge,
+        total,
+        net,
+        note: extraNoteEl.value.trim()
+      };
+    }
+
+    async function saveExtraPayment(payload) {
+      if (Number(payload.extraCharge || 0) <= 0) {
+        return { ok: true };
+      }
+
+      const paymentRow = {
+        room_number: payload.roomNumber,
+        amount: Number(payload.extraCharge || 0),
+        method: "checkout_extra",
+        note: payload.note
+          ? `ค่าใช้จ่ายเพิ่มเติมตอน Check-out | reservation_id: ${payload.reservationId} | ${payload.note}`
+          : `ค่าใช้จ่ายเพิ่มเติมตอน Check-out | reservation_id: ${payload.reservationId}`,
+        paid_at: new Date().toISOString()
+      };
+
+      const ins = await db.from("payments").insert([paymentRow]);
+
+      if (ins.error) {
+        console.error(ins.error);
+        return { ok: false, error: ins.error };
+      }
+
+      return { ok: true };
+    }
+
+    async function saveCheckout(){
+      const payload = calcAndShow();
+      if (!payload) return;
+
+      const ok = confirm(
+        `ยืนยันบันทึก Check-out?\n` +
+        `Reservation #${payload.reservationId}\n` +
+        `ห้อง ${payload.roomNumber}\n` +
+        `ค่าใช้จ่ายเพิ่มเติม: ${money(payload.extraCharge)} บาท`
+      );
+      if (!ok) return;
+
+      hideWarn();
+
+      if (!latestCheckinRow || !latestCheckinRow.id) {
+        showWarn("ไม่พบ active daily_checkins สำหรับ reservation นี้");
+        return;
+      }
+
+      const paymentSave = await saveExtraPayment(payload);
+      if (!paymentSave.ok) {
+        showWarn("บันทึกค่าใช้จ่ายเพิ่มเติมไม่สำเร็จ\n" + (paymentSave.error.message || ""));
+        return;
+      }
+
+      const updCheckin = await db
+        .from("daily_checkins")
+        .update({
+          check_out_at: new Date(payload.checkoutDate + "T12:00:00").toISOString(),
+          is_active: false,
+          updated_at: new Date().toISOString()
+        })
+        .eq("id", latestCheckinRow.id);
+
+      if (updCheckin.error){
+        console.error(updCheckin.error);
+        showWarn("อัปเดต daily_checkins ไม่สำเร็จ\n" + (updCheckin.error.message || ""));
+        return;
+      }
+
+      const updRoom = await db
+        .from("rooms")
+        .update({
+          status: "vacant",
+          updated_at: new Date().toISOString()
+        })
+        .eq("room_number", payload.roomNumber);
+
+      if (updRoom.error){
+        console.error(updRoom.error);
+        showWarn("Check-out สำเร็จ แต่เปลี่ยนสถานะห้องไม่สำเร็จ\n" + (updRoom.error.message || ""));
+        return;
+      }
+
+      const reservationUpdateData = {
+        status: "checked_out",
+        updated_at: new Date().toISOString()
+      };
+
+      if (reservationData && "check_out_date" in reservationData) {
+        reservationUpdateData.check_out_date = payload.checkoutDate;
+      }
+      if (reservationData && "checkout_date" in reservationData) {
+        reservationUpdateData.checkout_date = payload.checkoutDate;
+      }
+      if (reservationData && "extra_charge" in reservationData) {
+        reservationUpdateData.extra_charge = Number(payload.extraCharge || 0);
+      }
+      if (reservationData && "checkout_note" in reservationData) {
+        reservationUpdateData.checkout_note = payload.note || "";
+      }
+
+      const updReservation = await db
+        .from("reservations")
+        .update(reservationUpdateData)
+        .eq("id", payload.reservationId);
+
+      if (updReservation.error){
+        console.error(updReservation.error);
+        showWarn("Check-out สำเร็จ แต่เปลี่ยนสถานะ reservation ไม่สำเร็จ\n" + (updReservation.error.message || ""));
+        return;
+      }
+
+      sessionStorage.removeItem("daily_checkout_room");
+      sessionStorage.removeItem("daily_checkout_reservation_id");
+
+      alert("บันทึก Check-out สำเร็จ");
+      location.href = "reservation_list.html";
+    }
+
+    calcBtn.addEventListener("click", calcAndShow);
+    saveBtn.addEventListener("click", saveCheckout);
+    document.addEventListener("DOMContentLoaded", loadInitial);
+  </script>
+</body>
+</html>

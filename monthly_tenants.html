@@ -1,0 +1,1176 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <title>ผู้เช่า - ระบบอพาร์ทเมนต์</title>
+  <script src="storage.js"></script>
+  <style>
+    body {
+      font-family: "Prompt", Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f4eee7;
+      color: #6b3b1c;
+    }
+
+    header {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 20px 24px 8px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 24px;
+      font-weight: 700;
+      color: #7b4a23;
+    }
+
+    .page {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 8px 24px 40px;
+    }
+
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      background: #a66a2b;
+      color: #fff;
+      border: none;
+      border-radius: 999px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.18);
+      transition: background 0.15s ease, transform 0.12s ease, box-shadow 0.15s ease;
+    }
+
+    .back-btn:hover {
+      background: #905825;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+
+    .back-btn span.arrow {
+      font-size: 16px;
+      line-height: 1;
+    }
+
+    .card {
+      background: #ffffff;
+      padding: 18px 18px 20px;
+      border-radius: 10px;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.08);
+      border: 1px solid #e0d2c0;
+      margin-bottom: 16px;
+    }
+
+    .card h2 {
+      margin: 0 0 8px;
+      font-size: 18px;
+      color: #7b4a23;
+    }
+
+    .card p {
+      font-size: 13px;
+      margin: 4px 0 10px;
+    }
+
+    label {
+      display: block;
+      margin-top: 8px;
+      font-size: 13px;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    input[type="date"],
+    input[type="file"] {
+      width: 100%;
+      padding: 6px 8px;
+      margin-top: 4px;
+      font-size: 13px;
+      border-radius: 4px;
+      border: 1px solid #d6c4ad;
+      box-sizing: border-box;
+      background: #fff;
+    }
+
+    .room-picker-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      margin-top: 4px;
+    }
+
+    .room-picker-row input[readonly] {
+      background: #f7f0e6;
+      cursor: default;
+    }
+
+    button {
+      margin-top: 12px;
+      padding: 8px 16px;
+      background: #a66a2b;
+      color: white;
+      border: none;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.18);
+      transition: background 0.15s ease, transform 0.12s ease, box-shadow 0.15s ease;
+    }
+
+    button:hover {
+      background: #905825;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.22);
+    }
+
+    .secondary-btn {
+      margin-top: 0;
+      padding: 7px 12px;
+      border-radius: 999px;
+      background: #f0e2d2;
+      color: #6b3b1c;
+      box-shadow: none;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .secondary-btn:hover {
+      background: #e2d0bc;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+      transform: translateY(-1px);
+    }
+
+    #tenantTable button {
+      margin-top: 0;
+      padding: 6px 10px;
+      font-size: 12px;
+      border-radius: 999px;
+      white-space: nowrap;
+      margin-right: 6px;
+      margin-bottom: 4px;
+    }
+
+    .btn-danger {
+      background: #c62828;
+    }
+
+    .btn-danger:hover {
+      background: #aa1f1f;
+    }
+
+    .btn-ended {
+      background: #2f7d32;
+    }
+
+    .btn-ended:hover {
+      background: #246127;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      font-size: 13px;
+      background: #fff;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    th, td {
+      border: 1px solid #e4d6c4;
+      padding: 8px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background: #f0e2d2;
+      font-weight: 600;
+    }
+
+    tr.ended-row td {
+      background: #fff7f7;
+    }
+
+    .small {
+      font-size: 11px;
+      color: #777;
+    }
+
+    .status-active {
+      color: #2f7d32;
+      font-weight: 700;
+    }
+
+    .status-ended {
+      color: #c62828;
+      font-weight: 700;
+    }
+
+    .role-badge {
+      display: inline-block;
+      margin-left: 8px;
+      padding: 4px 10px;
+      font-size: 12px;
+      border-radius: 999px;
+      background: #f0e2d2;
+      color: #6b3b1c;
+      font-weight: 700;
+    }
+
+    .admin-note {
+      color: #c62828;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .summary-bar {
+      margin-top: 10px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      background: #fff2cc;
+      color: #7b4a23;
+      border: 1px solid #ead7a2;
+      font-size: 13px;
+      font-weight: 600;
+      display: none;
+    }
+
+    .summary-bar.show {
+      display: block;
+    }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.35);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .modal-backdrop.show {
+      display: flex;
+    }
+
+    .modal {
+      background: #ffffff;
+      padding: 18px 18px 16px;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 420px;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.3);
+      border: 1px solid #e0d2c0;
+    }
+
+    .modal h3 {
+      margin-top: 0;
+      margin-bottom: 8px;
+      font-size: 17px;
+      color: #7b4a23;
+    }
+
+    .modal p {
+      font-size: 13px;
+      margin: 6px 0;
+    }
+
+    .modal-buttons {
+      margin-top: 10px;
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .modal-buttons button {
+      margin-top: 0;
+    }
+
+    .modal-buttons button:first-child {
+      background: #e4d6c4;
+      color: #6b3b1c;
+      box-shadow: none;
+    }
+
+    .modal-buttons button:first-child:hover {
+      background: #d6c4af;
+      transform: translateY(-1px);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.18);
+    }
+
+    @media (max-width: 600px) {
+      header {
+        padding: 16px 16px 4px;
+        flex-wrap: wrap;
+      }
+
+      .page {
+        padding: 8px 16px 28px;
+      }
+
+      .card {
+        padding: 14px 14px 18px;
+      }
+
+      table {
+        font-size: 12px;
+      }
+
+      th, td {
+        padding: 6px;
+      }
+
+      .room-picker-row {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .room-picker-row .secondary-btn {
+        align-self: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <button class="back-btn" onclick="location.href='monthly_home.html'">
+      <span class="arrow">&larr;</span>
+      กลับหน้าแรก
+    </button>
+    <h1>
+      ผู้เช่ารายเดือน
+      <span id="roleBadge" class="role-badge">กำลังตรวจสอบสิทธิ์...</span>
+    </h1>
+  </header>
+
+  <div class="page">
+    <div class="card">
+      <h2>เพิ่มข้อมูลผู้เช่า (สร้างสัญญาใหม่)</h2>
+      <p class="small">
+        ใช้สำหรับสร้างสัญญาเช่าใหม่ในห้องที่ยังไม่มีสัญญาในช่วงเวลาเดียวกัน
+      </p>
+
+      <label>หมายเลขห้อง</label>
+      <div class="room-picker-row">
+        <input type="text" id="room" placeholder="เลือกห้องจากแผนผัง" readonly>
+        <button type="button" class="secondary-btn" onclick="openRoomPlan()">
+          เลือกจากแผนผัง
+        </button>
+      </div>
+      <p class="small">
+        ไปที่หน้าแผนผังห้อง แล้วแตะห้องที่ต้องการ ระบบจะส่งเลขห้องกลับมายังหน้านี้อัตโนมัติ
+      </p>
+
+      <label>ชื่อผู้เช่า</label>
+      <input type="text" id="tenantName" placeholder="เช่น คุณสมชาย">
+
+      <label>เบอร์ติดต่อ</label>
+      <input type="text" id="phone" placeholder="เช่น 08x-xxx-xxxx">
+
+      <label>เลขบัตรประชาชน / เลขพาสปอร์ต</label>
+      <input type="text" id="idNumber" placeholder="เช่น 1-2345-67890-12-3 หรือเลขพาสปอร์ต">
+
+      <label>ค่าเช่ารายเดือน (บาท)</label>
+      <input type="number" id="monthlyRent" placeholder="เช่น 6500">
+
+      <label>วันที่เริ่มเช่า</label>
+      <input type="date" id="startDate">
+
+      <label>ระยะเวลาเช่า (เดือน)</label>
+      <input type="number" id="leaseDuration" min="1" step="1" placeholder="เช่น 12">
+
+      <label>ไฟล์สัญญาเช่า (ถ้ามี)</label>
+      <input type="file" id="leaseContract" accept=".pdf,.jpg,.jpeg,.png">
+
+      <button onclick="saveTenant()">บันทึกข้อมูล</button>
+      <p id="message" style="color: green; margin-top: 8px; font-size: 13px;"></p>
+      <p class="small">
+        * ตัวอย่าง: ถ้าสัญญาแรก 1 ม.ค.–31 มี.ค. สามารถสร้างสัญญาใหม่ที่เริ่ม 1 เม.ย. ได้
+      </p>
+    </div>
+
+    <div class="card">
+      <h2>รายการห้องและผู้เช่าที่อยู่ในระบบ</h2>
+      <div id="endedSummary" class="summary-bar"></div>
+
+      <table id="tenantTable">
+        <thead>
+          <tr>
+            <th>ห้อง</th>
+            <th>ผู้เช่า / เบอร์โทร</th>
+            <th>เลขบัตร / พาสปอร์ต</th>
+            <th>ค่าเช่า / ระยะเวลา</th>
+            <th>วันที่เริ่ม–สิ้นสุด</th>
+            <th>สัญญาเช่า</th>
+            <th>สถานะ</th>
+            <th>อัปเดตล่าสุด</th>
+            <th>การจัดการ</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div id="editModalBackdrop" class="modal-backdrop">
+    <div class="modal">
+      <h3>แก้ไขข้อมูลผู้เช่า</h3>
+      <p class="small" id="editRoomLabel"></p>
+
+      <label>ชื่อผู้เช่า</label>
+      <input type="text" id="editTenantName">
+
+      <label>เบอร์ติดต่อ</label>
+      <input type="text" id="editPhone">
+
+      <label>เลขบัตรประชาชน / เลขพาสปอร์ต</label>
+      <input type="text" id="editIdNumber">
+
+      <label>ค่าเช่ารายเดือน (บาท)</label>
+      <input type="number" id="editMonthlyRent">
+
+      <label>ระยะเวลาเช่า (เดือน)</label>
+      <input type="number" id="editLeaseDuration" min="1" step="1">
+
+      <label>วันที่เริ่มเช่า</label>
+      <input type="date" id="editStartDate">
+
+      <p id="editModalError" class="small" style="color:red;"></p>
+
+      <div class="modal-buttons">
+        <button onclick="closeEditModal()">ยกเลิก</button>
+        <button onclick="saveEditTenant()">บันทึก</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    const SUPABASE_URL = "https://muebjorbqxuppzaixykg.supabase.co";
+    const SUPABASE_ANON_KEY = "sb_publishable_mybDlaBdUg9SN8nems0_Cg_QiVdgwY_";
+    const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    let currentBookings = [];
+    let editIndex = null;
+    let currentUser = null;
+    let currentUserRole = "viewer";
+
+    function isAdmin() {
+      return currentUserRole === "admin";
+    }
+
+    function updateRoleBadge() {
+      const badge = document.getElementById("roleBadge");
+      if (!badge) return;
+
+      if (currentUserRole === "admin") {
+        badge.textContent = "สิทธิ์: admin";
+        badge.style.background = "#dff3e2";
+        badge.style.color = "#2f7d32";
+      } else if (currentUserRole === "staff") {
+        badge.textContent = "สิทธิ์: staff";
+        badge.style.background = "#fff1d6";
+        badge.style.color = "#9a5b00";
+      } else {
+        badge.textContent = "สิทธิ์: viewer";
+        badge.style.background = "#ececec";
+        badge.style.color = "#666";
+      }
+    }
+
+    async function loadCurrentUserRole() {
+      try {
+        const { data: userData, error: userError } = await db.auth.getUser();
+
+        if (userError) {
+          console.error("โหลด user ไม่สำเร็จ:", userError.message);
+          currentUser = null;
+          currentUserRole = "viewer";
+          updateRoleBadge();
+          return;
+        }
+
+        currentUser = userData?.user || null;
+
+        if (!currentUser) {
+          currentUserRole = "viewer";
+          updateRoleBadge();
+          return;
+        }
+
+        const { data: roleRow, error: roleError } = await db
+          .from("user_roles")
+          .select("role")
+          .eq("user_id", currentUser.id)
+          .maybeSingle();
+
+        if (roleError) {
+          console.error("โหลด role ไม่สำเร็จ:", roleError.message);
+          currentUserRole = "viewer";
+          updateRoleBadge();
+          return;
+        }
+
+        currentUserRole = roleRow?.role || "viewer";
+        updateRoleBadge();
+      } catch (e) {
+        console.error("เกิดข้อผิดพลาดขณะตรวจสอบสิทธิ์:", e.message);
+        currentUserRole = "viewer";
+        updateRoleBadge();
+      }
+    }
+
+    function openRoomPlan() {
+      const returnTo = "monthly_tenants.html";
+      window.location.href = `room_plan.html?mode=monthly&return_to=${encodeURIComponent(returnTo)}`;
+    }
+
+    (function loadSelectedRoomFromStorage() {
+      const roomInput = document.getElementById("room");
+      if (!roomInput) return;
+
+      const pickedRoom = sessionStorage.getItem("picked_room_number");
+      if (pickedRoom) {
+        roomInput.value = pickedRoom;
+        sessionStorage.removeItem("picked_room_number");
+        sessionStorage.removeItem("picked_room_type");
+        sessionStorage.removeItem("picked_room_reservation_id");
+      }
+    })();
+
+    (function setDefaultStartDate() {
+      const input = document.getElementById("startDate");
+      if (input && !input.value) {
+        input.value = new Date().toISOString().split("T")[0];
+      }
+    })();
+
+    function computeEndDate(startStr, monthsStr) {
+      if (!startStr || !monthsStr) return "";
+      const months = Number(monthsStr);
+      if (Number.isNaN(months) || months <= 0) return "";
+
+      const d = new Date(startStr + "T00:00:00");
+      if (isNaN(d.getTime())) return "";
+
+      d.setMonth(d.getMonth() + months);
+      return d.toISOString().split("T")[0];
+    }
+
+    function parseDate(str) {
+      if (!str) return null;
+      const d = new Date(str + "T00:00:00");
+      return isNaN(d.getTime()) ? null : d;
+    }
+
+    function getTodayDateOnly() {
+      const now = new Date();
+      return new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    }
+
+    function isExpiredMonthlyBooking(booking) {
+      if (!booking || booking.rent_type !== "monthly") return false;
+
+      const endStr = computeEndDate(booking.checkin_date, booking.lease_duration);
+      if (!endStr) return false;
+
+      const endDate = parseDate(endStr);
+      if (!endDate) return false;
+
+      return getTodayDateOnly() >= endDate;
+    }
+
+    function dateRangesOverlap(startA, endA, startB, endB) {
+      if (!startA || !endA || !startB || !endB) return false;
+      return (startA < endB) && (startB < endA);
+    }
+
+    function fileToDataUrl(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function updateEndedSummary(endedCount) {
+      const bar = document.getElementById("endedSummary");
+      if (!bar) return;
+
+      if (endedCount > 0) {
+        bar.classList.add("show");
+        bar.textContent = `มีสัญญาที่หมดอายุแล้ว ${endedCount} รายการ แสดงไว้ด้านบนของตาราง`;
+      } else {
+        bar.classList.remove("show");
+        bar.textContent = "";
+      }
+    }
+
+    async function renderTenants() {
+      const tbody = document.querySelector("#tenantTable tbody");
+      tbody.innerHTML = "";
+
+      try {
+        const { data, error } = await db
+          .from("bookings")
+          .select(`
+            id,
+            room_number,
+            tenant_name,
+            phone,
+            id_number,
+            rent_type,
+            checkin_date,
+            checkout_date,
+            lease_duration,
+            status,
+            created_at,
+            updated_at,
+            monthly_rent,
+            lease_contract
+          `)
+          .eq("rent_type", "monthly")
+          .in("status", ["active", "ended"]);
+
+        if (error) {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `<td colspan="9" style="color:red;">ไม่สามารถดึงข้อมูลจากฐานข้อมูลได้: ${error.message}</td>`;
+          tbody.appendChild(tr);
+          updateEndedSummary(0);
+          return;
+        }
+
+        if (!data || data.length === 0) {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `<td colspan="9">ยังไม่มีข้อมูลผู้เช่าในระบบ</td>`;
+          tbody.appendChild(tr);
+          currentBookings = [];
+          updateEndedSummary(0);
+          return;
+        }
+
+        const normalized = data.map(item => {
+          const computedEnded = isExpiredMonthlyBooking(item);
+          const uiStatus = computedEnded || item.status === "ended" ? "ended" : "active";
+          return {
+            ...item,
+            ui_status: uiStatus,
+            computed_end_date: computeEndDate(item.checkin_date, item.lease_duration)
+          };
+        });
+
+        normalized.sort((a, b) => {
+          if (a.ui_status !== b.ui_status) {
+            return a.ui_status === "ended" ? -1 : 1;
+          }
+          return String(a.room_number || "").localeCompare(String(b.room_number || ""));
+        });
+
+        currentBookings = normalized.slice();
+        updateEndedSummary(normalized.filter(x => x.ui_status === "ended").length);
+
+        normalized.forEach((bk, idx) => {
+          const roomNumber = bk.room_number || "";
+          const tenantName = bk.tenant_name || "";
+          const phone = bk.phone || "";
+          const idNumber = bk.id_number || "";
+          const monthlyRent = bk.monthly_rent || "";
+          const startDate = bk.checkin_date || "";
+          const endDate = bk.computed_end_date || "";
+          const leaseMonths = bk.lease_duration || "";
+          const updated = bk.updated_at || bk.created_at || "";
+          const ended = bk.ui_status === "ended";
+
+          let contractHtml = "-";
+          if (bk.lease_contract) {
+            contractHtml = `<a href="${bk.lease_contract}" target="_blank" download="lease_contract">เปิดไฟล์</a>`;
+          }
+
+          let actionHtml = `<span class="admin-note">เฉพาะ admin</span>`;
+          if (isAdmin()) {
+            if (ended) {
+              actionHtml = `
+                <button class="btn-ended" onclick="endBookingAndMoveToHistory(${idx})">สิ้นสุดสัญญา</button>
+              `;
+            } else {
+              actionHtml = `
+                <button onclick="openEditModal(${idx})">แก้ไข</button>
+                <button class="btn-danger" onclick="cancelBookingAndMoveToHistory(${idx})">ยกเลิกสัญญา</button>
+              `;
+            }
+          }
+
+          const tr = document.createElement("tr");
+          if (ended) tr.classList.add("ended-row");
+
+          tr.innerHTML = `
+            <td>${roomNumber || "-"}</td>
+            <td>
+              <div>${tenantName || "-"}</div>
+              <div class="small">${phone || "-"}</div>
+            </td>
+            <td>${idNumber || "-"}</td>
+            <td>
+              <div>${monthlyRent || "-"} บาท</div>
+              <div class="small">${leaseMonths ? leaseMonths + " เดือน" : "-"}</div>
+            </td>
+            <td>
+              <div>${startDate || "-"}</div>
+              <div class="small">สิ้นสุด: ${endDate || "-"}</div>
+            </td>
+            <td>${contractHtml}</td>
+            <td class="${ended ? 'status-ended' : 'status-active'}">
+              ${ended ? 'หมดสัญญาแล้ว' : 'กำลังเช่า'}
+            </td>
+            <td class="small">${updated || "-"}</td>
+            <td>${actionHtml}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+
+      } catch (e) {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `<td colspan="9" style="color:red;">เกิดข้อผิดพลาดขณะโหลดข้อมูล: ${e.message}</td>`;
+        tbody.appendChild(tr);
+        updateEndedSummary(0);
+      }
+    }
+
+    async function saveTenant() {
+      const room = document.getElementById("room").value.trim();
+      const tenantName = document.getElementById("tenantName").value.trim();
+      const phone = document.getElementById("phone").value.trim();
+      const idNumber = document.getElementById("idNumber").value.trim();
+      const monthlyRent = document.getElementById("monthlyRent").value.trim();
+      let startDate = document.getElementById("startDate").value.trim();
+      const leaseDurationValue = document.getElementById("leaseDuration").value.trim();
+      const leaseContractInput = document.getElementById("leaseContract");
+      const leaseContractFile = leaseContractInput ? (leaseContractInput.files[0] || null) : null;
+      const msg = document.getElementById("message");
+
+      msg.textContent = "";
+      msg.style.color = "green";
+
+      if (!room || !tenantName || !monthlyRent) {
+        msg.style.color = "red";
+        msg.textContent = "กรุณาเลือกห้อง และกรอกชื่อผู้เช่าและค่าเช่าให้ครบถ้วน";
+        return;
+      }
+
+      if (!startDate) {
+        startDate = new Date().toISOString().split("T")[0];
+      }
+
+      if (!leaseDurationValue) {
+        msg.style.color = "red";
+        msg.textContent = "กรุณากรอกระยะเวลาเช่าเป็นจำนวนเดือน";
+        return;
+      }
+
+      const months = Number(leaseDurationValue);
+      if (Number.isNaN(months) || months <= 0) {
+        msg.style.color = "red";
+        msg.textContent = "กรุณากรอกระยะเวลาเช่าเป็นจำนวนเดือน (ตัวเลขมากกว่า 0)";
+        return;
+      }
+
+      const newEndStr = computeEndDate(startDate, months);
+      const newStartD = parseDate(startDate);
+      const newEndD = parseDate(newEndStr);
+
+      if (!newStartD || !newEndD) {
+        msg.style.color = "red";
+        msg.textContent = "วันที่เริ่มเช่าหรือระยะเวลาเช่าไม่ถูกต้อง";
+        return;
+      }
+
+      let contractDataUrl = "";
+      if (leaseContractFile) {
+        try {
+          contractDataUrl = await fileToDataUrl(leaseContractFile);
+        } catch (e) {
+          msg.style.color = "red";
+          msg.textContent = "เกิดข้อผิดพลาดขณะอ่านไฟล์สัญญา: " + e.message;
+          return;
+        }
+      }
+
+      try {
+        const { data: roomRows, error: roomError } = await db
+          .from("rooms")
+          .select("id, room_number, status, monthly_rate, rent_type, room_type")
+          .eq("room_number", room);
+
+        if (roomError) {
+          msg.style.color = "red";
+          msg.textContent = "เกิดข้อผิดพลาดขณะตรวจสอบข้อมูลห้อง: " + roomError.message;
+          return;
+        }
+
+        let roomRow = roomRows && roomRows.length > 0 ? roomRows[0] : null;
+
+        if (!roomRow) {
+          const { data: newRoom, error: newRoomErr } = await db
+            .from("rooms")
+            .insert({
+              room_number: room,
+              rent_type: "monthly",
+              status: "vacant",
+              monthly_rate: monthlyRent,
+              room_type: "standard"
+            })
+            .select()
+            .single();
+
+          if (newRoomErr) {
+            msg.style.color = "red";
+            msg.textContent = "เกิดข้อผิดพลาดขณะบันทึกข้อมูลห้อง: " + newRoomErr.message;
+            return;
+          }
+
+          roomRow = newRoom;
+        }
+
+        const { data: existBookings, error: existErr } = await db
+          .from("bookings")
+          .select("id, rent_type, status, room_number, checkin_date, checkout_date, lease_duration")
+          .eq("room_number", room);
+
+        if (existErr) {
+          msg.style.color = "red";
+          msg.textContent = "เกิดข้อผิดพลาดขณะตรวจสอบสัญญาเดิมของห้องนี้: " + existErr.message;
+          return;
+        }
+
+        const ACTIVE_STATUSES = ["active", "reserved", "pending"];
+        const activeBookings = (existBookings || []).filter(b => ACTIVE_STATUSES.includes(b.status));
+
+        let hasOverlap = false;
+        let overlapInfo = "";
+
+        activeBookings.forEach(b => {
+          let exStartStr = null;
+          let exEndStr = null;
+
+          if (b.rent_type === "monthly") {
+            if (!b.checkin_date || !b.lease_duration) return;
+            exStartStr = b.checkin_date;
+            exEndStr = computeEndDate(b.checkin_date, b.lease_duration);
+          } else if (b.rent_type === "daily") {
+            if (!b.checkin_date) return;
+            exStartStr = b.checkin_date;
+            exEndStr = b.checkout_date || b.checkin_date;
+          }
+
+          const exStartD = parseDate(exStartStr);
+          const exEndD = parseDate(exEndStr);
+
+          if (!exStartD || !exEndD) return;
+
+          if (dateRangesOverlap(newStartD, newEndD, exStartD, exEndD)) {
+            hasOverlap = true;
+            overlapInfo = `มีสัญญาเดิม (${b.rent_type}) ช่วง ${exStartStr} ถึง ${exEndStr}`;
+          }
+        });
+
+        if (hasOverlap) {
+          msg.style.color = "red";
+          msg.textContent =
+            "ไม่สามารถสร้างสัญญาใหม่ได้ เนื่องจากช่วงเวลานี้ทับกับสัญญาเดิมของห้องนี้\n" +
+            overlapInfo;
+          return;
+        }
+
+        const { error: bookingError } = await db
+          .from("bookings")
+          .insert({
+            room_number: room,
+            tenant_name: tenantName,
+            phone: phone,
+            id_number: idNumber || "",
+            rent_type: "monthly",
+            checkin_date: startDate,
+            lease_duration: months,
+            status: "active",
+            monthly_rent: monthlyRent,
+            lease_contract: contractDataUrl || null
+          });
+
+        if (bookingError) {
+          msg.style.color = "red";
+          msg.textContent = "เกิดข้อผิดพลาดขณะบันทึกสัญญาเช่า: " + bookingError.message;
+          return;
+        }
+
+        await db
+          .from("rooms")
+          .update({
+            status: "occupied",
+            monthly_rate: monthlyRent,
+            rent_type: "monthly"
+          })
+          .eq("room_number", room);
+
+        document.getElementById("room").value = "";
+        document.getElementById("tenantName").value = "";
+        document.getElementById("phone").value = "";
+        document.getElementById("idNumber").value = "";
+        document.getElementById("monthlyRent").value = "";
+        document.getElementById("leaseDuration").value = "";
+        document.getElementById("leaseContract").value = "";
+        document.getElementById("startDate").value = new Date().toISOString().split("T")[0];
+
+        msg.style.color = "green";
+        msg.textContent = "บันทึกข้อมูลเรียบร้อยแล้ว";
+        alert("✅ บันทึกข้อมูลผู้เช่าและสัญญาเช่าเรียบร้อยแล้ว");
+
+        renderTenants();
+      } catch (e) {
+        msg.style.color = "red";
+        msg.textContent = "เกิดข้อผิดพลาดขณะบันทึกข้อมูล: " + e.message;
+      }
+    }
+
+    function openEditModal(index) {
+      if (!isAdmin()) {
+        alert("❌ เฉพาะ admin เท่านั้นที่สามารถแก้ไขข้อมูลได้");
+        return;
+      }
+
+      if (index < 0 || index >= currentBookings.length) return;
+
+      const bk = currentBookings[index];
+      if (bk.ui_status === "ended") {
+        alert("❌ สัญญาที่หมดอายุแล้วไม่สามารถแก้ไขได้");
+        return;
+      }
+
+      editIndex = index;
+
+      document.getElementById("editRoomLabel").textContent = "ห้อง " + (bk.room_number || "-");
+      document.getElementById("editTenantName").value = bk.tenant_name || "";
+      document.getElementById("editPhone").value = bk.phone || "";
+      document.getElementById("editIdNumber").value = bk.id_number || "";
+      document.getElementById("editMonthlyRent").value = bk.monthly_rent || "";
+      document.getElementById("editLeaseDuration").value = bk.lease_duration || "";
+      document.getElementById("editStartDate").value = bk.checkin_date || "";
+
+      document.getElementById("editModalError").textContent = "";
+      document.getElementById("editModalBackdrop").classList.add("show");
+    }
+
+    function closeEditModal() {
+      editIndex = null;
+      document.getElementById("editModalBackdrop").classList.remove("show");
+    }
+
+    async function saveEditTenant() {
+      const errorEl = document.getElementById("editModalError");
+      errorEl.textContent = "";
+
+      if (!isAdmin()) {
+        errorEl.textContent = "เฉพาะ admin เท่านั้นที่สามารถแก้ไขข้อมูลได้";
+        return;
+      }
+
+      if (editIndex === null || editIndex < 0 || editIndex >= currentBookings.length) {
+        closeEditModal();
+        return;
+      }
+
+      const bk = currentBookings[editIndex];
+      if (bk.ui_status === "ended") {
+        errorEl.textContent = "สัญญาที่หมดอายุแล้วไม่สามารถแก้ไขได้";
+        return;
+      }
+
+      const newName = document.getElementById("editTenantName").value.trim();
+      const newPhone = document.getElementById("editPhone").value.trim();
+      const newIdNo = document.getElementById("editIdNumber").value.trim();
+      const newRent = document.getElementById("editMonthlyRent").value.trim();
+      const newMonths = document.getElementById("editLeaseDuration").value.trim();
+      const newStart = document.getElementById("editStartDate").value.trim();
+
+      if (!newName || !newRent || !newMonths) {
+        errorEl.textContent = "กรุณากรอกชื่อผู้เช่า ค่าเช่า และระยะเวลาเช่าให้ครบถ้วน";
+        return;
+      }
+
+      const monthsNum = Number(newMonths);
+      if (Number.isNaN(monthsNum) || monthsNum <= 0) {
+        errorEl.textContent = "ระยะเวลาเช่าต้องเป็นตัวเลขมากกว่า 0";
+        return;
+      }
+
+      try {
+        const { error: bookingErr } = await db
+          .from("bookings")
+          .update({
+            tenant_name: newName,
+            phone: newPhone,
+            id_number: newIdNo,
+            monthly_rent: newRent,
+            lease_duration: monthsNum,
+            checkin_date: newStart || bk.checkin_date
+          })
+          .eq("id", bk.id);
+
+        if (bookingErr) {
+          errorEl.textContent = "เกิดข้อผิดพลาดขณะอัปเดตข้อมูลสัญญา: " + bookingErr.message;
+          return;
+        }
+
+        await db
+          .from("rooms")
+          .update({ monthly_rate: newRent })
+          .eq("room_number", bk.room_number);
+
+        closeEditModal();
+        alert("✅ อัปเดตข้อมูลผู้เช่าสำเร็จ");
+        renderTenants();
+      } catch (e) {
+        errorEl.textContent = "เกิดข้อผิดพลาดขณะอัปเดตข้อมูล: " + e.message;
+      }
+    }
+
+    async function moveBookingToHistoryAndDelete(booking, archiveAction) {
+      const archivedBy = currentUser?.id || null;
+      const finalCheckoutDate = booking.checkout_date || booking.computed_end_date || null;
+
+      const { error: historyErr } = await db
+        .from("rental_history")
+        .insert({
+          original_booking_id: booking.id,
+          room_number: booking.room_number,
+          tenant_name: booking.tenant_name,
+          phone: booking.phone,
+          id_number: booking.id_number,
+          rent_type: booking.rent_type,
+          checkin_date: booking.checkin_date,
+          checkout_date: finalCheckoutDate,
+          lease_duration: booking.lease_duration,
+          monthly_rent: booking.monthly_rent || null,
+          lease_contract: booking.lease_contract || null,
+          original_status: booking.status,
+          archive_action: archiveAction,
+          archived_by: archivedBy,
+          note: archiveAction === "ended"
+            ? "หมดสัญญาและย้ายเข้าประวัติ"
+            : "ยกเลิกสัญญาและย้ายเข้าประวัติ"
+        });
+
+      if (historyErr) {
+        throw new Error("บันทึกประวัติไม่สำเร็จ: " + historyErr.message);
+      }
+
+      const { error: deleteErr } = await db
+        .from("bookings")
+        .delete()
+        .eq("id", booking.id);
+
+      if (deleteErr) {
+        throw new Error("ลบข้อมูล booking ไม่สำเร็จ: " + deleteErr.message);
+      }
+
+      const { data: remainRows, error: remainErr } = await db
+        .from("bookings")
+        .select("id")
+        .eq("room_number", booking.room_number)
+        .limit(1);
+
+      if (remainErr) {
+        throw new Error("ตรวจสอบ booking คงเหลือไม่สำเร็จ: " + remainErr.message);
+      }
+
+      if (!remainRows || remainRows.length === 0) {
+        const { error: roomErr } = await db
+          .from("rooms")
+          .update({ status: "vacant" })
+          .eq("room_number", booking.room_number);
+
+        if (roomErr) {
+          throw new Error("อัปเดตสถานะห้องไม่สำเร็จ: " + roomErr.message);
+        }
+      }
+    }
+
+    async function endBookingAndMoveToHistory(index) {
+      if (!isAdmin()) {
+        alert("❌ เฉพาะ admin เท่านั้น");
+        return;
+      }
+
+      if (index < 0 || index >= currentBookings.length) return;
+      const bk = currentBookings[index];
+
+      if (bk.ui_status !== "ended") {
+        alert("❌ สัญญานี้ยังไม่หมดอายุ");
+        return;
+      }
+
+      const ok = confirm(
+        `ต้องการสิ้นสุดสัญญาห้อง ${bk.room_number || "-"} ใช่หรือไม่?\n` +
+        `ระบบจะเก็บข้อมูลลงประวัติ และลบออกจาก bookings`
+      );
+      if (!ok) return;
+
+      try {
+        await moveBookingToHistoryAndDelete(bk, "ended");
+        alert("✅ สิ้นสุดสัญญาเรียบร้อย และย้ายไปประวัติแล้ว");
+        renderTenants();
+      } catch (e) {
+        alert("❌ " + e.message);
+      }
+    }
+
+    async function cancelBookingAndMoveToHistory(index) {
+      if (!isAdmin()) {
+        alert("❌ เฉพาะ admin เท่านั้น");
+        return;
+      }
+
+      if (index < 0 || index >= currentBookings.length) return;
+      const bk = currentBookings[index];
+
+      if (bk.ui_status === "ended") {
+        alert("❌ รายการนี้หมดสัญญาแล้ว ให้ใช้ปุ่มสิ้นสุดสัญญา");
+        return;
+      }
+
+      const ok = confirm(
+        `ต้องการยกเลิกสัญญาห้อง ${bk.room_number || "-"} ใช่หรือไม่?\n` +
+        `ระบบจะเก็บข้อมูลลงประวัติ และลบออกจาก bookings`
+      );
+      if (!ok) return;
+
+      try {
+        await moveBookingToHistoryAndDelete(bk, "cancelled");
+        alert("✅ ยกเลิกสัญญาเรียบร้อย และย้ายไปประวัติแล้ว");
+        renderTenants();
+      } catch (e) {
+        alert("❌ " + e.message);
+      }
+    }
+
+    async function initPage() {
+      await loadCurrentUserRole();
+      await renderTenants();
+    }
+
+    initPage();
+  </script>
+</body>
+</html>

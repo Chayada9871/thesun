@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>ประวัติการเข้าพักรายวัน</title>
+  <style>
+    body {
+      font-family: "Prompt", Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f4eee7;
+      color: #6b3b1c;
+    }
+
+    .page {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 24px 24px 40px;
+      box-sizing: border-box;
+    }
+
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 18px;
+      background: #a66a2b;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+      transition: background 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .back-btn:hover {
+      background: #905825;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.18);
+    }
+
+    .print-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 18px;
+      background: #2b3a67;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+      transition: background 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .print-btn:hover {
+      background: #1f2c50;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.18);
+    }
+
+    .title {
+      text-align: center;
+      margin-top: 26px;
+      margin-bottom: 20px;
+      font-size: 30px;
+      font-weight: 700;
+      color: #7b4a23;
+    }
+
+    .card {
+      background: #ffffff;
+      border-radius: 10px;
+      padding: 18px 18px 20px;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.08);
+      border: 1px solid #e0d2c0;
+      margin-bottom: 18px;
+    }
+
+    h2 {
+      margin: 0 0 10px 0;
+      color: #7b4a23;
+      font-size: 18px;
+      border-bottom: 1px solid #e7d8c6;
+      padding-bottom: 4px;
+    }
+
+    .filter-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: end;
+      margin-bottom: 10px;
+      font-size: 14px;
+    }
+
+    .filter-box {
+      min-width: 220px;
+      flex: 1 1 220px;
+    }
+
+    .filter-box label {
+      display: block;
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 4px;
+      color: #4e311a;
+    }
+
+    .filter-box input,
+    .filter-box select {
+      width: 100%;
+      padding: 8px 10px;
+      border-radius: 6px;
+      border: 1px solid #ccbba7;
+      font-size: 13px;
+      background: #fff;
+      color: #4e311a;
+      box-sizing: border-box;
+    }
+
+    .btn {
+      padding: 9px 14px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 700;
+      background: #a66a2b;
+      color: #fff;
+      box-shadow: 0 2px 4px rgba(0,0,0,.15);
+    }
+
+    .btn:hover {
+      background: #905825;
+    }
+
+    .btn-secondary {
+      background: #6c757d;
+    }
+
+    .btn-secondary:hover {
+      background: #565e64;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      margin-top: 10px;
+      background: #fff;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    th, td {
+      border: 1px solid #e4d6c4;
+      padding: 8px 10px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background: #f0e2d2;
+    }
+
+    .tag {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 11px;
+      color: white;
+      background: #888;
+      font-weight: 700;
+    }
+
+    .tag-done {
+      background: #2b9c3f;
+    }
+
+    .tag-active {
+      background: #e67e22;
+    }
+
+    .note {
+      font-size: 12px;
+      color: #7b6a57;
+      margin-top: 6px;
+    }
+
+    .error-box {
+      display: none;
+      margin-top: 10px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      background: #fff1f1;
+      border: 1px solid #efc2c2;
+      color: #b42318;
+      font-size: 13px;
+      white-space: pre-line;
+    }
+
+    .muted {
+      color: #7b6a57;
+      font-size: 12px;
+    }
+
+    .print-meta {
+      display: none;
+      margin-top: 8px;
+      font-size: 12px;
+      color: #555;
+    }
+
+    @media (max-width: 700px) {
+      .page {
+        padding: 16px 14px 28px;
+      }
+      .card {
+        padding: 14px 12px 16px;
+      }
+      table {
+        font-size: 12px;
+      }
+    }
+
+    @media print {
+      body {
+        background: #fff;
+        color: #000;
+      }
+
+      .back-btn,
+      .print-btn,
+      .btn,
+      .filter-row,
+      .error-box {
+        display: none !important;
+      }
+
+      .page {
+        max-width: 100%;
+        margin: 0;
+        padding: 0;
+      }
+
+      .title {
+        margin-top: 0;
+        margin-bottom: 12px;
+        font-size: 22px;
+        color: #000;
+      }
+
+      .card {
+        box-shadow: none;
+        border: 1px solid #bbb;
+        padding: 12px;
+      }
+
+      .print-meta {
+        display: block;
+      }
+
+      .note,
+      .muted {
+        color: #000;
+      }
+
+      table {
+        border-collapse: collapse;
+        border: 1px solid #999;
+        font-size: 11px;
+      }
+
+      th, td {
+        border: 1px solid #999;
+        padding: 6px;
+        color: #000;
+      }
+
+      th {
+        background: #eee !important;
+        color: #000;
+      }
+
+      .tag {
+        color: #000 !important;
+        background: #fff !important;
+        border: 1px solid #000 !important;
+      }
+
+      tr, td, th {
+        page-break-inside: avoid;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="top-actions">
+      <button class="back-btn" onclick="location.href='daily_home.html'">
+        <span class="arrow">&larr;</span>
+        กลับเมนูรายวัน
+      </button>
+
+      <button class="print-btn" onclick="printDailyHistory()">🖨️ พิมพ์</button>
+    </div>
+
+    <div class="title">ประวัติการเข้าพัก (รายวัน)</div>
+
+    <div class="card">
+      <h2>รายการเข้าพักทั้งหมด</h2>
+
+      <div class="print-meta" id="printMeta"></div>
+
+      <div class="filter-row">
+        <div class="filter-box">
+          <label>ค้นหาโดยห้อง / ชื่อลูกค้า</label>
+          <input type="text" id="searchBox" placeholder="เช่น 201 หรือ คุณสมชาย">
+        </div>
+
+        <div class="filter-box">
+          <label>สถานะ</label>
+          <select id="statusFilter">
+            <option value="">ทั้งหมด</option>
+            <option value="active">กำลังพัก</option>
+            <option value="done">เช็คเอาท์แล้ว</option>
+          </select>
+        </div>
+
+        <div class="filter-box" style="flex:0 0 auto; min-width:unset;">
+          <button class="btn" id="reloadBtn" type="button">โหลดใหม่</button>
+        </div>
+
+        <div class="filter-box" style="flex:0 0 auto; min-width:unset;">
+          <button class="btn btn-secondary" id="resetBtn" type="button">ล้างตัวกรอง</button>
+        </div>
+      </div>
+
+      <div id="errorBox" class="error-box"></div>
+
+      <table id="historyTable">
+        <thead>
+          <tr>
+            <th>ห้อง</th>
+            <th>ชื่อลูกค้า</th>
+            <th>รหัสจอง</th>
+            <th>วันที่เข้า</th>
+            <th>วันที่ออก</th>
+            <th>จำนวนคืน</th>
+            <th>สถานะ</th>
+            <th>บันทึกล่าสุด</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td colspan="8">กำลังโหลด...</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="note">
+        * ข้อมูลดึงจากตาราง <b>daily_checkins</b><br>
+        * ชื่อลูกค้าจะใช้จาก <b>daily_checkins.guest_name</b> ก่อน ถ้าไม่มีจะ fallback ไปที่ <b>reservations.customer_name</b>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    const SUPABASE_URL = "https://muebjorbqxuppzaixykg.supabase.co";
+    const SUPABASE_ANON_KEY = "sb_publishable_mybDlaBdUg9SN8nems0_Cg_QiVdgwY_";
+    const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    let allRows = [];
+
+    function showError(msg) {
+      const box = document.getElementById("errorBox");
+      box.style.display = "block";
+      box.textContent = msg || "";
+    }
+
+    function hideError() {
+      const box = document.getElementById("errorBox");
+      box.style.display = "none";
+      box.textContent = "";
+    }
+
+    function formatDateTime(value) {
+      if (!value) return "";
+      const d = new Date(value);
+      if (isNaN(d.getTime())) return value;
+      return d.toLocaleString("th-TH");
+    }
+
+    function formatDateOnly(value) {
+      if (!value) return "";
+      const d = new Date(value);
+      if (isNaN(d.getTime())) return value;
+      return d.toLocaleDateString("th-TH");
+    }
+
+    function calcNights(checkInAt, checkOutAt) {
+      if (!checkInAt || !checkOutAt) return "";
+      const start = new Date(checkInAt);
+      const end = new Date(checkOutAt);
+      if (isNaN(start.getTime()) || isNaN(end.getTime())) return "";
+
+      const diffMs = end - start;
+      const diffDays = diffMs / (1000 * 60 * 60 * 24);
+
+      if (diffDays <= 0) return 1;
+      return Math.ceil(diffDays);
+    }
+
+    function getStatusTag(row) {
+      if (row.is_active) {
+        return '<span class="tag tag-active">กำลังพัก</span>';
+      }
+      return '<span class="tag tag-done">เช็คเอาท์แล้ว</span>';
+    }
+
+    function printDailyHistory() {
+      const now = new Date();
+      document.getElementById("printMeta").textContent =
+        "พิมพ์เมื่อ: " + now.toLocaleString("th-TH", {
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+          hour: "2-digit",
+          minute: "2-digit"
+        });
+      window.print();
+    }
+
+    async function loadHistory() {
+      hideError();
+
+      const tbody = document.querySelector("#historyTable tbody");
+      tbody.innerHTML = '<tr><td colspan="8">กำลังโหลด...</td></tr>';
+
+      const { data, error } = await db
+        .from("daily_checkins")
+        .select(`
+          id,
+          reservation_id,
+          room_number,
+          guest_name,
+          check_in_at,
+          check_out_at,
+          is_active,
+          created_at,
+          updated_at,
+          reservations (
+            reservation_code,
+            customer_name
+          )
+        `)
+        .order("created_at", { ascending: false });
+
+      if (error) {
+        console.error(error);
+        showError("โหลดข้อมูลไม่สำเร็จ\n" + (error.message || ""));
+        tbody.innerHTML = '<tr><td colspan="8">โหลดข้อมูลผิดพลาด</td></tr>';
+        return;
+      }
+
+      allRows = data || [];
+      renderHistory();
+    }
+
+    function renderHistory() {
+      const tbody = document.querySelector("#historyTable tbody");
+      const searchText = (document.getElementById("searchBox").value || "").trim().toLowerCase();
+      const statusFilter = document.getElementById("statusFilter").value;
+
+      tbody.innerHTML = "";
+
+      let rows = [...allRows];
+
+      if (searchText) {
+        rows = rows.filter(row => {
+          const room = String(row.room_number || "").toLowerCase();
+          const guest = String(row.guest_name || row.reservations?.customer_name || "").toLowerCase();
+          const code = String(row.reservations?.reservation_code || "").toLowerCase();
+          return room.includes(searchText) || guest.includes(searchText) || code.includes(searchText);
+        });
+      }
+
+      if (statusFilter === "active") {
+        rows = rows.filter(row => row.is_active === true);
+      } else if (statusFilter === "done") {
+        rows = rows.filter(row => row.is_active === false);
+      }
+
+      if (!rows.length) {
+        tbody.innerHTML = '<tr><td colspan="8">ไม่พบข้อมูล</td></tr>';
+        return;
+      }
+
+      rows.forEach(row => {
+        const guestName = row.guest_name || row.reservations?.customer_name || "-";
+        const reservationCode = row.reservations?.reservation_code || "-";
+        const nights = calcNights(row.check_in_at, row.check_out_at);
+
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${row.room_number || ""}</td>
+          <td>${guestName}</td>
+          <td>${reservationCode}</td>
+          <td>${formatDateTime(row.check_in_at)}</td>
+          <td>${row.check_out_at ? formatDateTime(row.check_out_at) : '<span class="muted">ยังไม่เช็คเอาท์</span>'}</td>
+          <td>${nights || ""}</td>
+          <td>${getStatusTag(row)}</td>
+          <td>${formatDateTime(row.updated_at || row.created_at)}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      loadHistory();
+
+      document.getElementById("searchBox").addEventListener("input", renderHistory);
+      document.getElementById("statusFilter").addEventListener("change", renderHistory);
+      document.getElementById("reloadBtn").addEventListener("click", loadHistory);
+
+      document.getElementById("resetBtn").addEventListener("click", () => {
+        document.getElementById("searchBox").value = "";
+        document.getElementById("statusFilter").value = "";
+        renderHistory();
+      });
+    });
+  </script>
+</body>
+</html>

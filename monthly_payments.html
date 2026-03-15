@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <title>บันทึกการชำระเงิน - ระบบอพาร์ทเมนต์</title>
+  <script src="storage.js"></script>
+  <style>
+    body {
+      font-family: "Prompt", Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f4eee7;
+      color: #6b3b1c;
+    }
+
+    header {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 20px 24px 8px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 24px;
+      font-weight: 700;
+      color: #7b4a23;
+    }
+
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      background: #a66a2b;
+      color: #fff;
+      border: none;
+      border-radius: 999px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.18);
+      transition: background 0.15s ease, transform 0.12s ease,
+                  box-shadow 0.15s ease;
+    }
+
+    .back-btn:hover {
+      background: #905825;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+
+    .back-btn span.arrow {
+      font-size: 16px;
+      line-height: 1;
+    }
+
+    .page {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 8px 24px 40px;
+      box-sizing: border-box;
+    }
+
+    .card {
+      background: #ffffff;
+      padding: 18px 18px 20px;
+      border-radius: 10px;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.08);
+      border: 1px solid #e0d2c0;
+      margin-bottom: 16px;
+    }
+
+    .card h2 {
+      margin: 0 0 8px;
+      font-size: 18px;
+      color: #7b4a23;
+    }
+
+    .card p {
+      font-size: 13px;
+      margin: 4px 0 10px;
+    }
+
+    label {
+      display: block;
+      margin-top: 8px;
+      font-size: 13px;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    select {
+      width: 100%;
+      padding: 6px 8px;
+      margin-top: 4px;
+      font-size: 13px;
+      border-radius: 4px;
+      border: 1px solid #d6c4ad;
+      box-sizing: border-box;
+      background: #fff;
+    }
+
+    button {
+      margin-top: 12px;
+      padding: 8px 18px;
+      background: #a66a2b;
+      color: white;
+      border: none;
+      border-radius: 999px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.18);
+      transition: background 0.15s ease,
+                  transform 0.12s ease,
+                  box-shadow 0.15s ease;
+    }
+
+    button:hover {
+      background: #905825;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.22);
+    }
+
+    .secondary-btn {
+      margin-top: 8px;
+      padding: 7px 14px;
+      border-radius: 999px;
+      background: #f0e2d2;
+      color: #6b3b1c;
+      box-shadow: none;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .secondary-btn:hover {
+      background: #e2d0bc;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+      transform: translateY(-1px);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      font-size: 13px;
+      background: #fff;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    th, td {
+      border: 1px solid #e4d6c4;
+      padding: 8px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background: #f0e2d2;
+      font-weight: 600;
+    }
+
+    .small {
+      font-size: 11px;
+      color: #777;
+    }
+
+    .danger-btn {
+      background: #c0392b;
+      margin-top: 0;
+      padding: 5px 10px;
+      font-size: 11px;
+      color: white;
+      border: none;
+      border-radius: 999px;
+      cursor: pointer;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.18);
+    }
+
+    .danger-btn:hover {
+      background: #a12f22;
+      transform: translateY(-1px);
+      box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+    }
+
+    .time-highlight {
+      font-weight: 600;
+      color: #2b3a67;
+      font-size: 12px;
+    }
+
+    @media (max-width: 600px) {
+      header {
+        padding: 16px 16px 4px;
+        flex-wrap: wrap;
+      }
+      .page {
+        padding: 8px 16px 28px;
+      }
+      .card {
+        padding: 14px 14px 18px;
+      }
+      table {
+        font-size: 12px;
+      }
+      th, td {
+        padding: 6px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <button class="back-btn" onclick="location.href='monthly_home.html'">
+      <span class="arrow">&larr;</span>
+      กลับหน้าแรก
+    </button>
+    <h1>บันทึกการชำระเงิน</h1>
+  </header>
+
+  <div class="page">
+    <div class="card">
+      <h2>บันทึกการชำระเงินค่าเช่า</h2>
+      <p class="small">
+        พนักงานสามารถบันทึกการชำระเงินค่าเช่าได้ที่นี่ ระบบจะบันทึกเป็น
+        <strong>เดือนและปีปัจจุบัน</strong> ให้โดยอัตโนมัติ
+      </p>
+
+      <label>หมายเลขห้อง (เฉพาะห้องที่กำลังเช่าอยู่)</label>
+      <select id="room">
+        <option value="">-- เลือกห้องที่กำลังเช่า --</option>
+      </select>
+
+      <label>จำนวนเงิน (บาท)</label>
+      <input type="number" id="amount" placeholder="เช่น 3000" min="0" step="0.01">
+
+      <button onclick="savePayment()">บันทึกการชำระเงิน</button>
+      <p id="message" style="color: green; margin-top: 8px; font-size: 13px;"></p>
+      <p class="small">
+        • ผู้เช่าสามารถแบ่งชำระหลายครั้งในเดือนเดียวกันได้ ระบบจะรวมยอดชำระของเดือนนั้นให้เอง<br>
+        • หากจ่ายเกิน ระบบจะเก็บเป็นยอดเครดิต เพื่อนำไปหักกับบิลเดือนถัดไป
+      </p>
+    </div>
+
+    <div class="card">
+      <h2>ประวัติการชำระเงิน</h2>
+
+      <label>กรองตามหมายเลขห้อง (ถ้าเว้นว่างจะแสดงทุกห้อง)</label>
+      <input type="text" id="filterRoom" placeholder="เช่น 301 หรือเว้นว่างเพื่อแสดงทั้งหมด">
+      <button class="secondary-btn" onclick="renderPayments()">แสดงประวัติการชำระเงิน</button>
+
+      <table id="paymentTable">
+        <thead>
+          <tr>
+            <th>ห้อง</th>
+            <th>จำนวนเงิน (บาท)</th>
+            <th>วันที่และเวลาในการบันทึก</th>
+            <th>จัดการ</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+      <p class="small">
+        หากบันทึกจำนวนเงินผิด สามารถกดปุ่ม “ยกเลิกบันทึก” เพื่อยกเลิกรายการชำระเงินนั้นได้
+      </p>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <script>
+    const SUPABASE_URL = "https://muebjorbqxuppzaixykg.supabase.co";
+    const SUPABASE_ANON_KEY = "sb_publishable_mybDlaBdUg9SN8nems0_Cg_QiVdgwY_";
+
+    const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    window.db = db;
+
+    let activeBookings = [];
+    let currentUserRole = "viewer"; // default
+
+    function formatDateTime(isoString) {
+      if (!isoString) return "";
+      const d = new Date(isoString);
+      if (isNaN(d.getTime())) return isoString;
+      return d.toLocaleString("th-TH", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit"
+      });
+    }
+
+    async function getCurrentUserRole() {
+      try {
+        // 1) ลองอ่านจาก storage ก่อน
+        const savedRole =
+          localStorage.getItem("role") ||
+          sessionStorage.getItem("role") ||
+          localStorage.getItem("user_role") ||
+          sessionStorage.getItem("user_role");
+
+        if (savedRole) {
+          currentUserRole = savedRole;
+          return savedRole;
+        }
+
+        // 2) fallback: อ่านจาก auth + ตาราง user_roles
+        const {
+          data: { user },
+          error: userError
+        } = await db.auth.getUser();
+
+        if (userError || !user) {
+          currentUserRole = "viewer";
+          return currentUserRole;
+        }
+
+        const { data, error } = await db
+          .from("user_roles")
+          .select("role")
+          .eq("user_id", user.id)
+          .single();
+
+        if (error || !data) {
+          currentUserRole = "viewer";
+          return currentUserRole;
+        }
+
+        currentUserRole = data.role || "viewer";
+        return currentUserRole;
+
+      } catch (e) {
+        console.error("getCurrentUserRole error:", e);
+        currentUserRole = "viewer";
+        return currentUserRole;
+      }
+    }
+
+    function isAdmin() {
+      return currentUserRole === "admin";
+    }
+
+    async function loadActiveRooms() {
+      const select = document.getElementById("room");
+      select.innerHTML = '<option value="">-- เลือกห้องที่กำลังเช่า --</option>';
+      activeBookings = [];
+
+      try {
+        const { data, error } = await db
+          .from("bookings")
+          .select(`
+            id,
+            room_number,
+            tenant_name,
+            rent_type,
+            status
+          `)
+          .eq("rent_type", "monthly")
+          .eq("status", "active");
+
+        if (error) {
+          console.error("loadActiveRooms error:", error);
+          const opt = document.createElement("option");
+          opt.value = "";
+          opt.textContent = "เกิดข้อผิดพลาดในการดึงข้อมูลห้อง: " + error.message;
+          select.appendChild(opt);
+          return;
+        }
+
+        if (!data || data.length === 0) {
+          const opt = document.createElement("option");
+          opt.value = "";
+          opt.textContent = "ไม่มีห้องที่กำลังเช่าอยู่";
+          select.appendChild(opt);
+          return;
+        }
+
+        activeBookings = data
+          .map(bk => ({
+            bookingId: bk.id,
+            roomId: null,
+            roomNumber: bk.room_number || "",
+            guestName: bk.tenant_name || ""
+          }))
+          .filter(r => r.roomNumber);
+
+        activeBookings.sort((a, b) => a.roomNumber.localeCompare(b.roomNumber, "th"));
+
+        activeBookings.forEach(r => {
+          const opt = document.createElement("option");
+          opt.value = String(r.bookingId);
+          opt.textContent = `${r.roomNumber} - ${r.guestName || "-"}`;
+          select.appendChild(opt);
+        });
+
+      } catch (e) {
+        console.error("loadActiveRooms exception:", e);
+        const opt = document.createElement("option");
+        opt.value = "";
+        opt.textContent = "เกิดข้อผิดพลาดในการโหลดห้อง";
+        select.appendChild(opt);
+      }
+    }
+
+    async function savePayment() {
+      const roomSelect = document.getElementById("room");
+      const bookingIdStr = roomSelect.value;
+      const amountRaw = document.getElementById("amount").value.trim();
+      const msg = document.getElementById("message");
+
+      msg.textContent = "";
+      msg.style.color = "green";
+
+      if (!bookingIdStr) {
+        msg.style.color = "red";
+        msg.textContent = "กรุณาเลือกห้องที่กำลังเช่าอยู่";
+        return;
+      }
+      if (!amountRaw) {
+        msg.style.color = "red";
+        msg.textContent = "กรุณากรอกจำนวนเงิน";
+        return;
+      }
+
+      const amount = Number(amountRaw);
+      if (Number.isNaN(amount) || amount <= 0) {
+        msg.style.color = "red";
+        msg.textContent = "จำนวนเงินต้องเป็นตัวเลขมากกว่า 0";
+        return;
+      }
+
+      const bookingId = Number(bookingIdStr);
+      const selected = activeBookings.find(b => b.bookingId === bookingId);
+
+      if (!selected) {
+        msg.style.color = "red";
+        msg.textContent = "ไม่พบข้อมูลห้อง/สัญญาในระบบ โปรดลองโหลดหน้าใหม่";
+        return;
+      }
+
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = now.getMonth() + 1;
+
+      try {
+        const { error } = await db
+          .from("payments")
+          .insert({
+            booking_id: bookingId,
+            room_id: null,
+            room_number: selected.roomNumber,
+            year: year,
+            month: month,
+            amount: amount
+          });
+
+        if (error) {
+          console.error("savePayment error:", error);
+          msg.style.color = "red";
+          msg.textContent = "เกิดข้อผิดพลาดขณะบันทึกการชำระเงิน: " + error.message;
+          return;
+        }
+
+        msg.style.color = "green";
+        msg.textContent = "บันทึกการชำระเงินเรียบร้อยแล้ว";
+        document.getElementById("amount").value = "";
+
+        await renderPayments();
+
+      } catch (e) {
+        console.error("savePayment exception:", e);
+        msg.style.color = "red";
+        msg.textContent = "เกิดข้อผิดพลาดขณะบันทึกการชำระเงิน: " + e.message;
+      }
+    }
+
+    async function deletePayment(id) {
+      if (!isAdmin()) {
+        alert("เฉพาะผู้ดูแลระบบ (admin) เท่านั้นที่สามารถยกเลิกบันทึกได้");
+        return;
+      }
+
+      if (!id) return;
+      if (!confirm("ยืนยันการยกเลิกบันทึกรายการชำระเงินนี้หรือไม่?")) return;
+
+      try {
+        const { error } = await db
+          .from("payments")
+          .delete()
+          .eq("id", id);
+
+        if (error) {
+          console.error("deletePayment error:", error);
+          alert("เกิดข้อผิดพลาดขณะยกเลิกบันทึกรายการชำระเงิน: " + error.message);
+          return;
+        }
+
+        await renderPayments();
+
+      } catch (e) {
+        console.error("deletePayment exception:", e);
+        alert("เกิดข้อผิดพลาดขณะยกเลิกบันทึกรายการชำระเงิน: " + e.message);
+      }
+    }
+
+    async function renderPayments() {
+      const filterRoom = document.getElementById("filterRoom").value.trim();
+      const tbody = document.querySelector("#paymentTable tbody");
+      tbody.innerHTML = "";
+
+      try {
+        const { data, error } = await db
+          .from("payments")
+          .select("*")
+          .order("paid_at", { ascending: false });
+
+        if (error) {
+          console.error("renderPayments error:", error);
+          const tr = document.createElement("tr");
+          tr.innerHTML = `<td colspan="4" style="color:red;">ไม่สามารถดึงข้อมูลการชำระเงินได้: ${error.message}</td>`;
+          tbody.appendChild(tr);
+          return;
+        }
+
+        if (!data || data.length === 0) {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `<td colspan="4">ยังไม่มีข้อมูลการชำระเงิน</td>`;
+          tbody.appendChild(tr);
+          return;
+        }
+
+        data.forEach(p => {
+          if (filterRoom && p.room_number !== filterRoom) return;
+
+          const manageButton = isAdmin()
+            ? `<button class="danger-btn" onclick="deletePayment('${p.id}')">ยกเลิกบันทึก</button>`
+            : `-`;
+
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td>${p.room_number || "-"}</td>
+            <td>${(Number(p.amount) || 0).toFixed(2)}</td>
+            <td class="time-highlight">${formatDateTime(p.paid_at || p.created_at)}</td>
+            <td>${manageButton}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+
+        if (!tbody.hasChildNodes()) {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `<td colspan="4">ไม่พบข้อมูลการชำระเงินของห้องนี้</td>`;
+          tbody.appendChild(tr);
+        }
+
+      } catch (e) {
+        console.error("renderPayments exception:", e);
+        const tr = document.createElement("tr");
+        tr.innerHTML = `<td colspan="4" style="color:red;">เกิดข้อผิดพลาดขณะโหลดข้อมูลการชำระเงิน: ${e.message}</td>`;
+        tbody.appendChild(tr);
+      }
+    }
+
+    async function initPage() {
+      await getCurrentUserRole();
+      await loadActiveRooms();
+      await renderPayments();
+    }
+
+    initPage();
+  </script>
+</body>
+</html>

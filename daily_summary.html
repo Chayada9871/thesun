@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <title>สรุปภาพรวมห้องรายวัน</title>
+  <style>
+    body {
+      font-family: "Prompt", Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f4eee7;
+      color: #6b3b1c;
+    }
+
+    header {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 20px 24px 8px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      box-sizing: border-box;
+      flex-wrap: wrap;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 24px;
+      font-weight: 700;
+      color: #7b4a23;
+    }
+
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      background: #a66a2b;
+      color: #fff;
+      border: none;
+      border-radius: 999px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .print-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      background: #2b3a67;
+      color: #fff;
+      border: none;
+      border-radius: 999px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .page {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 8px 24px 40px;
+      box-sizing: border-box;
+    }
+
+    .card {
+      background: #ffffff;
+      padding: 18px 18px 20px;
+      border-radius: 10px;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.08);
+      border: 1px solid #e0d2c0;
+      margin-bottom: 16px;
+    }
+
+    .card h2 {
+      margin: 0 0 8px;
+      font-size: 18px;
+      color: #7b4a23;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+    }
+
+    .summary-item {
+      background: #faf7f2;
+      border-radius: 8px;
+      padding: 10px 12px;
+      border: 1px solid #e0d2c0;
+    }
+
+    .summary-label {
+      font-size: 12px;
+      color: #755137;
+    }
+
+    .summary-value {
+      font-size: 20px;
+      font-weight: 700;
+      margin-top: 4px;
+      color: #2b3a67;
+    }
+
+    label {
+      display: inline-block;
+      margin-top: 6px;
+      font-size: 13px;
+      color: #6b3b1c;
+    }
+
+    input, select {
+      padding: 4px 8px;
+      font-size: 13px;
+      margin-left: 4px;
+      border-radius: 4px;
+      border: 1px solid #d6c4ad;
+      background: #fff;
+      box-sizing: border-box;
+    }
+
+    button {
+      margin-top: 8px;
+      padding: 7px 16px;
+      background: #a66a2b;
+      color: white;
+      border: none;
+      border-radius: 999px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      font-size: 13px;
+      background: #fff;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    th, td {
+      border: 1px solid #e4d6c4;
+      padding: 8px;
+      text-align: left;
+    }
+
+    th {
+      background: #f0e2d2;
+      font-weight: 600;
+    }
+
+    .small {
+      font-size: 11px;
+      color: #777;
+    }
+
+    .text-right {
+      text-align: right;
+    }
+
+    .text-center {
+      text-align: center;
+    }
+
+    .print-meta {
+      display: none;
+      margin-top: 6px;
+      font-size: 12px;
+      color: #555;
+    }
+
+    @media print {
+      body {
+        background: #ffffff;
+        color: #000000;
+      }
+
+      .back-btn,
+      .print-btn,
+      button,
+      label,
+      input,
+      select {
+        display: none !important;
+      }
+
+      header {
+        max-width: 100%;
+        margin: 0;
+        padding: 0 0 12px 0;
+      }
+
+      header h1 {
+        color: #000;
+        font-size: 20px;
+      }
+
+      .page {
+        max-width: 100%;
+        margin: 0;
+        padding: 0;
+      }
+
+      .card {
+        box-shadow: none;
+        border: none;
+        padding: 0;
+        margin-bottom: 18px;
+      }
+
+      .print-meta {
+        display: block;
+      }
+
+      .summary-item {
+        background: #fff !important;
+        border: 1px solid #999;
+      }
+
+      .summary-label,
+      .summary-value,
+      .small {
+        color: #000 !important;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 11px;
+      }
+
+      th, td {
+        border: 1px solid #999;
+        padding: 6px;
+        color: #000;
+      }
+
+      th {
+        background: #eee !important;
+        color: #000;
+      }
+
+      tr, td, th {
+        page-break-inside: avoid;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <button class="back-btn" onclick="history.back()">← กลับ</button>
+    <button class="print-btn" onclick="printDailySummary()">🖨️ พิมพ์</button>
+    <h1>สรุปภาพรวมห้องรายวัน</h1>
+  </header>
+
+  <div class="page">
+    <div class="card">
+      <h2>สรุปตัวเลขสำคัญ</h2>
+      <div class="print-meta" id="printMeta"></div>
+
+      <div class="summary-grid">
+        <div class="summary-item">
+          <div class="summary-label">จำนวนรายการจองทั้งหมด</div>
+          <div class="summary-value" id="totalReservations">0</div>
+        </div>
+        <div class="summary-item">
+          <div class="summary-label">จำนวนรายการที่เข้าพักอยู่</div>
+          <div class="summary-value" id="checkedInReservations">0</div>
+        </div>
+        <div class="summary-item">
+          <div class="summary-label">จำนวนรายการที่ Check-out แล้ว</div>
+          <div class="summary-value" id="checkedOutReservations">0</div>
+        </div>
+        <div class="summary-item">
+          <div class="summary-label">รายได้รวม</div>
+          <div class="summary-value" id="totalIncome">0 บาท</div>
+        </div>
+      </div>
+      <p class="small" style="margin-top:10px;">
+        รายได้รวมคำนวณจาก total_price + checkout_extra ของรายการที่ checked_out
+      </p>
+    </div>
+
+    <div class="card">
+      <h2>รายได้รายวันตามเดือนที่เลือก</h2>
+      <div>
+        <label>
+          เดือน:
+          <select id="monthInput">
+            <option value="1">มกราคม</option>
+            <option value="2">กุมภาพันธ์</option>
+            <option value="3">มีนาคม</option>
+            <option value="4">เมษายน</option>
+            <option value="5">พฤษภาคม</option>
+            <option value="6">มิถุนายน</option>
+            <option value="7">กรกฎาคม</option>
+            <option value="8">สิงหาคม</option>
+            <option value="9">กันยายน</option>
+            <option value="10">ตุลาคม</option>
+            <option value="11">พฤศจิกายน</option>
+            <option value="12">ธันวาคม</option>
+          </select>
+        </label>
+
+        <label>
+          ปี:
+          <input type="number" id="yearInput" style="width:100px;">
+        </label>
+
+        <button onclick="renderDailyIncome()">แสดงรายได้รายวัน</button>
+      </div>
+
+      <table id="dailyIncomeTable">
+        <thead>
+          <tr>
+            <th>วันที่</th>
+            <th class="text-right">รายได้รวม (บาท)</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <h2>รายการที่กำลังเข้าพัก</h2>
+      <table id="checkedInTable">
+        <thead>
+          <tr>
+            <th>รหัสจอง</th>
+            <th>ชื่อลูกค้า</th>
+            <th>เบอร์โทร</th>
+            <th>วันเข้า</th>
+            <th>วันออก</th>
+            <th class="text-center">จำนวนคืน</th>
+            <th class="text-center">จำนวนห้อง</th>
+            <th class="text-right">ราคาต่อคืน</th>
+            <th>สถานะ</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+  <script>
+    const SUPABASE_URL = "https://muebjorbqxuppzaixykg.supabase.co";
+    const SUPABASE_ANON_KEY = "sb_publishable_mybDlaBdUg9SN8nems0_Cg_QiVdgwY_";
+    const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    let reservationsCache = null;
+
+    function formatMoney(num) {
+      const n = Number(num) || 0;
+      return n.toLocaleString("th-TH", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      });
+    }
+
+    function formatDate(dateStr) {
+      if (!dateStr) return "";
+      const d = new Date(dateStr);
+      if (isNaN(d.getTime())) return dateStr;
+      return d.toLocaleDateString("th-TH");
+    }
+
+    function toNumber(val) {
+      const n = Number(val || 0);
+      return isNaN(n) ? 0 : n;
+    }
+
+    function calcNights(checkIn, checkOut) {
+      if (!checkIn || !checkOut) return 1;
+
+      const inDate = new Date(checkIn);
+      const outDate = new Date(checkOut);
+
+      if (isNaN(inDate.getTime()) || isNaN(outDate.getTime())) return 1;
+
+      const diffMs = outDate - inDate;
+      const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+      return diffDays > 0 ? diffDays : 1;
+    }
+
+    function normalizeDateOnly(dateStr) {
+      if (!dateStr) return "";
+      return String(dateStr).split("T")[0];
+    }
+
+    function printDailySummary() {
+      const now = new Date();
+      document.getElementById("printMeta").textContent =
+        "พิมพ์เมื่อ: " + now.toLocaleString("th-TH", {
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+          hour: "2-digit",
+          minute: "2-digit"
+        });
+      window.print();
+    }
+
+    async function getAllReservations() {
+      if (reservationsCache) return reservationsCache;
+
+      const { data, error } = await db
+        .from("reservations")
+        .select(`
+          id,
+          reservation_code,
+          customer_name,
+          customer_phone,
+          check_in_date,
+          check_out_date,
+          status,
+          price_per_night,
+          total_rooms,
+          total_price,
+          checkout_extra
+        `)
+        .order("check_out_date", { ascending: false });
+
+      if (error) {
+        console.error("reservations fetch error:", error);
+        reservationsCache = [];
+        return reservationsCache;
+      }
+
+      reservationsCache = data || [];
+      return reservationsCache;
+    }
+
+    async function initSummary() {
+      const reservations = await getAllReservations();
+
+      const checkedInRows = reservations.filter(r =>
+        String(r.status || "").trim().toLowerCase() === "checked_in"
+      );
+
+      const checkedOutRows = reservations.filter(r =>
+        String(r.status || "").trim().toLowerCase() === "checked_out"
+      );
+
+      document.getElementById("totalReservations").textContent = reservations.length;
+      document.getElementById("checkedInReservations").textContent = checkedInRows.length;
+      document.getElementById("checkedOutReservations").textContent = checkedOutRows.length;
+
+      const totalIncome = checkedOutRows.reduce((sum, r) => {
+        return sum + toNumber(r.total_price) + toNumber(r.checkout_extra);
+      }, 0);
+
+      document.getElementById("totalIncome").textContent = formatMoney(totalIncome) + " บาท";
+
+      const tbody = document.querySelector("#checkedInTable tbody");
+      tbody.innerHTML = "";
+
+      checkedInRows.forEach(r => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${r.reservation_code || ""}</td>
+          <td>${r.customer_name || ""}</td>
+          <td>${r.customer_phone || ""}</td>
+          <td>${formatDate(r.check_in_date)}</td>
+          <td>${formatDate(r.check_out_date)}</td>
+          <td class="text-center">${calcNights(r.check_in_date, r.check_out_date)}</td>
+          <td class="text-center">${r.total_rooms || 0}</td>
+          <td class="text-right">${formatMoney(r.price_per_night)}</td>
+          <td>${r.status || ""}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      if (!tbody.hasChildNodes()) {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `<td colspan="9">ไม่มีรายการที่กำลังเข้าพัก</td>`;
+        tbody.appendChild(tr);
+      }
+
+      const today = new Date();
+      document.getElementById("monthInput").value = String(today.getMonth() + 1);
+      document.getElementById("yearInput").value = today.getFullYear();
+
+      await renderDailyIncome();
+    }
+
+    async function renderDailyIncome() {
+      const tbody = document.querySelector("#dailyIncomeTable tbody");
+      tbody.innerHTML = "";
+
+      const month = parseInt(document.getElementById("monthInput").value, 10);
+      const year = parseInt(document.getElementById("yearInput").value, 10);
+
+      if (isNaN(month) || isNaN(year)) {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `<td colspan="2">กรุณาเลือกเดือนและปีให้ถูกต้อง</td>`;
+        tbody.appendChild(tr);
+        return;
+      }
+
+      const reservations = await getAllReservations();
+
+      const rows = reservations.filter(r => {
+        const status = String(r.status || "").trim().toLowerCase();
+        if (status !== "checked_out") return false;
+
+        const dateOnly = normalizeDateOnly(r.check_out_date);
+        if (!dateOnly) return false;
+
+        const d = new Date(dateOnly + "T00:00:00");
+        if (isNaN(d.getTime())) return false;
+
+        return d.getMonth() + 1 === month && d.getFullYear() === year;
+      });
+
+      const dailySum = {};
+
+      rows.forEach(r => {
+        const dateOnly = normalizeDateOnly(r.check_out_date);
+        const amount = toNumber(r.total_price) + toNumber(r.checkout_extra);
+
+        if (!dailySum[dateOnly]) dailySum[dateOnly] = 0;
+        dailySum[dateOnly] += amount;
+      });
+
+      const daysInMonth = new Date(year, month, 0).getDate();
+      let totalMonthIncome = 0;
+
+      for (let day = 1; day <= daysInMonth; day++) {
+        const dateKey = `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+        const val = dailySum[dateKey] || 0;
+        totalMonthIncome += val;
+
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${formatDate(dateKey)}</td>
+          <td class="text-right">${formatMoney(val)}</td>
+        `;
+        tbody.appendChild(tr);
+      }
+
+      const trTotal = document.createElement("tr");
+      trTotal.innerHTML = `
+        <th>รวมทั้งเดือน</th>
+        <th class="text-right">${formatMoney(totalMonthIncome)}</th>
+      `;
+      tbody.appendChild(trTotal);
+    }
+
+    document.addEventListener("DOMContentLoaded", initSummary);
+  </script>
+</body>
+</html>
