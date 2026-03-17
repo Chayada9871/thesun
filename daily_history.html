@@ -14,7 +14,7 @@
     }
 
     .page {
-      max-width: 1100px;
+      max-width: 1200px;
       margin: 0 auto;
       padding: 24px 24px 40px;
       box-sizing: border-box;
@@ -27,48 +27,52 @@
       flex-wrap: wrap;
     }
 
-    .back-btn {
+    .back-btn,
+    .print-btn,
+    .btn {
       display: inline-flex;
       align-items: center;
+      justify-content: center;
       gap: 6px;
       padding: 10px 18px;
-      background: #a66a2b;
-      color: #fff;
       border: none;
-      border-radius: 4px;
-      font-size: 15px;
-      font-weight: 600;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 700;
       cursor: pointer;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.15);
       transition: background 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.15);
     }
 
-    .back-btn:hover {
+    .back-btn,
+    .btn {
+      background: #a66a2b;
+      color: #fff;
+    }
+
+    .back-btn:hover,
+    .btn:hover {
       background: #905825;
       transform: translateY(-1px);
-      box-shadow: 0 4px 8px rgba(0,0,0,0.18);
     }
 
     .print-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 10px 18px;
       background: #2b3a67;
       color: #fff;
-      border: none;
-      border-radius: 4px;
-      font-size: 15px;
-      font-weight: 600;
-      cursor: pointer;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.15);
-      transition: background 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
     }
 
     .print-btn:hover {
       background: #1f2c50;
       transform: translateY(-1px);
-      box-shadow: 0 4px 8px rgba(0,0,0,0.18);
+    }
+
+    .btn-secondary {
+      background: #6c757d;
+      color: #fff;
+    }
+
+    .btn-secondary:hover {
+      background: #565e64;
     }
 
     .title {
@@ -76,13 +80,13 @@
       margin-top: 26px;
       margin-bottom: 20px;
       font-size: 30px;
-      font-weight: 700;
+      font-weight: 800;
       color: #7b4a23;
     }
 
     .card {
       background: #ffffff;
-      border-radius: 10px;
+      border-radius: 14px;
       padding: 18px 18px 20px;
       box-shadow: 0 3px 8px rgba(0,0,0,0.08);
       border: 1px solid #e0d2c0;
@@ -94,7 +98,7 @@
       color: #7b4a23;
       font-size: 18px;
       border-bottom: 1px solid #e7d8c6;
-      padding-bottom: 4px;
+      padding-bottom: 6px;
     }
 
     .filter-row {
@@ -103,7 +107,6 @@
       gap: 12px;
       align-items: end;
       margin-bottom: 10px;
-      font-size: 14px;
     }
 
     .filter-box {
@@ -122,8 +125,8 @@
     .filter-box input,
     .filter-box select {
       width: 100%;
-      padding: 8px 10px;
-      border-radius: 6px;
+      padding: 9px 10px;
+      border-radius: 8px;
       border: 1px solid #ccbba7;
       font-size: 13px;
       background: #fff;
@@ -131,59 +134,153 @@
       box-sizing: border-box;
     }
 
-    .btn {
-      padding: 9px 14px;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 13px;
-      font-weight: 700;
-      background: #a66a2b;
-      color: #fff;
-      box-shadow: 0 2px 4px rgba(0,0,0,.15);
-    }
-
-    .btn:hover {
-      background: #905825;
-    }
-
-    .btn-secondary {
-      background: #6c757d;
-    }
-
-    .btn-secondary:hover {
-      background: #565e64;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 13px;
+    .error-box {
+      display: none;
       margin-top: 10px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      background: #fff1f1;
+      border: 1px solid #efc2c2;
+      color: #b42318;
+      font-size: 13px;
+      white-space: pre-line;
+    }
+
+    .print-meta {
+      display: none;
+      margin-top: 8px;
+      font-size: 12px;
+      color: #555;
+    }
+
+    .note {
+      font-size: 12px;
+      color: #7b6a57;
+      margin-top: 8px;
+      line-height: 1.6;
+    }
+
+    .summary-bar {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+      margin-top: 10px;
+    }
+
+    .summary-item {
+      background: #faf5ef;
+      border: 1px solid #e4d6c4;
+      border-radius: 12px;
+      padding: 12px;
+    }
+
+    .summary-label {
+      font-size: 12px;
+      color: #7b6a57;
+      margin-bottom: 4px;
+      font-weight: 700;
+    }
+
+    .summary-value {
+      font-size: 22px;
+      font-weight: 800;
+      color: #7b4a23;
+    }
+
+    .day-groups {
+      display: grid;
+      gap: 18px;
+      margin-top: 14px;
+    }
+
+    .day-group {
       background: #fff;
-      border-radius: 8px;
+      border: 1px solid #e2d4c2;
+      border-radius: 16px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.06);
       overflow: hidden;
     }
 
-    th, td {
-      border: 1px solid #e4d6c4;
-      padding: 8px 10px;
-      text-align: left;
-      vertical-align: top;
+    .day-header {
+      background: #efe1d0;
+      padding: 14px 16px;
+      border-bottom: 1px solid #e1cfba;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
     }
 
-    th {
-      background: #f0e2d2;
+    .day-title {
+      font-size: 22px;
+      font-weight: 800;
+      color: #7b4a23;
+      margin: 0;
+    }
+
+    .day-sub {
+      font-size: 13px;
+      color: #7b6a57;
+      margin-top: 2px;
+    }
+
+    .day-count {
+      background: #fff8f0;
+      border: 1px solid #dfc7a9;
+      color: #7b4a23;
+      padding: 7px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .day-body {
+      padding: 14px;
+      display: grid;
+      gap: 14px;
+    }
+
+    .stay-card {
+      background: #fcf8f3;
+      border: 1px solid #eadcc9;
+      border-radius: 14px;
+      overflow: hidden;
+    }
+
+    .stay-header {
+      padding: 12px 14px;
+      background: #f8efe5;
+      border-bottom: 1px solid #eadcc9;
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .stay-title {
+      font-size: 18px;
+      font-weight: 800;
+      color: #7b4a23;
+      margin: 0;
+    }
+
+    .stay-subtitle {
+      font-size: 13px;
+      color: #7b6a57;
+      margin-top: 3px;
     }
 
     .tag {
       display: inline-block;
-      padding: 2px 8px;
+      padding: 6px 12px;
       border-radius: 999px;
-      font-size: 11px;
+      font-size: 12px;
       color: white;
-      background: #888;
       font-weight: 700;
+      white-space: nowrap;
     }
 
     .tag-done {
@@ -194,22 +291,57 @@
       background: #e67e22;
     }
 
-    .note {
-      font-size: 12px;
-      color: #7b6a57;
-      margin-top: 6px;
+    .tag-other {
+      background: #7f8c8d;
     }
 
-    .error-box {
-      display: none;
-      margin-top: 10px;
-      padding: 10px 12px;
-      border-radius: 8px;
-      background: #fff1f1;
-      border: 1px solid #efc2c2;
-      color: #b42318;
+    .stay-body {
+      padding: 14px;
+    }
+
+    .section-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 14px;
+    }
+
+    .info-box {
+      background: #fff;
+      border: 1px solid #eadcc9;
+      border-radius: 12px;
+      padding: 12px 14px;
+    }
+
+    .info-box h3 {
+      margin: 0 0 10px 0;
+      font-size: 14px;
+      color: #7b4a23;
+      border-bottom: 1px solid #ecdfcf;
+      padding-bottom: 6px;
+    }
+
+    .info-row {
+      display: grid;
+      grid-template-columns: 130px 1fr;
+      gap: 8px;
+      margin-bottom: 8px;
       font-size: 13px;
-      white-space: pre-line;
+      align-items: start;
+    }
+
+    .info-label {
+      color: #7b6a57;
+      font-weight: 700;
+    }
+
+    .info-value {
+      color: #4e311a;
+      word-break: break-word;
+    }
+
+    .money {
+      font-weight: 800;
+      color: #2e6b3f;
     }
 
     .muted {
@@ -217,22 +349,35 @@
       font-size: 12px;
     }
 
-    .print-meta {
-      display: none;
-      margin-top: 8px;
-      font-size: 12px;
-      color: #555;
+    .empty-box {
+      text-align: center;
+      padding: 28px 16px;
+      color: #7b6a57;
+      background: #fff;
+      border: 1px dashed #d7c5b1;
+      border-radius: 14px;
     }
 
     @media (max-width: 700px) {
       .page {
         padding: 16px 14px 28px;
       }
-      .card {
-        padding: 14px 12px 16px;
+
+      .title {
+        font-size: 24px;
       }
-      table {
-        font-size: 12px;
+
+      .day-title {
+        font-size: 18px;
+      }
+
+      .stay-title {
+        font-size: 16px;
+      }
+
+      .info-row {
+        grid-template-columns: 1fr;
+        gap: 2px;
       }
     }
 
@@ -263,46 +408,27 @@
         color: #000;
       }
 
-      .card {
+      .card,
+      .day-group,
+      .stay-card,
+      .info-box {
         box-shadow: none;
         border: 1px solid #bbb;
-        padding: 12px;
       }
 
       .print-meta {
         display: block;
       }
 
-      .note,
-      .muted {
-        color: #000;
-      }
-
-      table {
-        border-collapse: collapse;
-        border: 1px solid #999;
-        font-size: 11px;
-      }
-
-      th, td {
-        border: 1px solid #999;
-        padding: 6px;
-        color: #000;
-      }
-
-      th {
+      .day-header,
+      .stay-header {
         background: #eee !important;
-        color: #000;
       }
 
       .tag {
         color: #000 !important;
         background: #fff !important;
         border: 1px solid #000 !important;
-      }
-
-      tr, td, th {
-        page-break-inside: avoid;
       }
     }
   </style>
@@ -311,24 +437,22 @@
   <div class="page">
     <div class="top-actions">
       <button class="back-btn" onclick="location.href='daily_home.html'">
-        <span class="arrow">&larr;</span>
-        กลับเมนูรายวัน
+        <span>&larr;</span> กลับเมนูรายวัน
       </button>
-
       <button class="print-btn" onclick="printDailyHistory()">🖨️ พิมพ์</button>
     </div>
 
     <div class="title">ประวัติการเข้าพัก (รายวัน)</div>
 
     <div class="card">
-      <h2>รายการเข้าพักทั้งหมด</h2>
+      <h2>ค้นหาและสรุปข้อมูล</h2>
 
       <div class="print-meta" id="printMeta"></div>
 
       <div class="filter-row">
         <div class="filter-box">
-          <label>ค้นหาโดยห้อง / ชื่อลูกค้า</label>
-          <input type="text" id="searchBox" placeholder="เช่น 201 หรือ คุณสมชาย">
+          <label>ค้นหาโดยห้อง / ชื่อลูกค้า / รหัสจอง / เบอร์โทร</label>
+          <input type="text" id="searchBox" placeholder="เช่น 201 / คุณสมชาย / RSV001 / 089...">
         </div>
 
         <div class="filter-box">
@@ -351,31 +475,28 @@
 
       <div id="errorBox" class="error-box"></div>
 
-      <table id="historyTable">
-        <thead>
-          <tr>
-            <th>ห้อง</th>
-            <th>ชื่อลูกค้า</th>
-            <th>รหัสจอง</th>
-            <th>วันที่เข้า</th>
-            <th>วันที่ออก</th>
-            <th>จำนวนคืน</th>
-            <th>สถานะ</th>
-            <th>บันทึกล่าสุด</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td colspan="8">กำลังโหลด...</td>
-          </tr>
-        </tbody>
-      </table>
+      <div class="summary-bar">
+        <div class="summary-item">
+          <div class="summary-label">รายการทั้งหมด</div>
+          <div class="summary-value" id="countAll">0</div>
+        </div>
+        <div class="summary-item">
+          <div class="summary-label">กำลังพัก</div>
+          <div class="summary-value" id="countActive">0</div>
+        </div>
+        <div class="summary-item">
+          <div class="summary-label">เช็คเอาท์แล้ว</div>
+          <div class="summary-value" id="countDone">0</div>
+        </div>
+      </div>
 
       <div class="note">
-        * ข้อมูลดึงจากตาราง <b>daily_checkins</b><br>
-        * ชื่อลูกค้าจะใช้จาก <b>daily_checkins.guest_name</b> ก่อน ถ้าไม่มีจะ fallback ไปที่ <b>reservations.customer_name</b>
+        * ข้อมูลถูกแยกเป็นแต่ละวันเพื่อให้อ่านง่ายขึ้น<br>
+        * ใช้วันจาก <b>daily_checkins.check_in_at</b> ก่อน ถ้าไม่มีจะใช้ <b>reservations.check_in_date</b>
       </div>
     </div>
+
+    <div id="dayGroups" class="day-groups"></div>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -399,37 +520,69 @@
     }
 
     function formatDateTime(value) {
-      if (!value) return "";
+      if (!value) return "-";
       const d = new Date(value);
       if (isNaN(d.getTime())) return value;
       return d.toLocaleString("th-TH");
     }
 
     function formatDateOnly(value) {
-      if (!value) return "";
+      if (!value) return "-";
       const d = new Date(value);
       if (isNaN(d.getTime())) return value;
       return d.toLocaleDateString("th-TH");
     }
 
-    function calcNights(checkInAt, checkOutAt) {
-      if (!checkInAt || !checkOutAt) return "";
-      const start = new Date(checkInAt);
-      const end = new Date(checkOutAt);
-      if (isNaN(start.getTime()) || isNaN(end.getTime())) return "";
+    function formatMoney(value) {
+      const num = Number(value || 0);
+      return num.toLocaleString("th-TH", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      });
+    }
+
+    function calcNights(checkInAt, checkOutAt, reservationCheckIn, reservationCheckOut) {
+      const startValue = checkInAt || reservationCheckIn;
+      const endValue = checkOutAt || reservationCheckOut;
+
+      if (!startValue || !endValue) return "-";
+
+      const start = new Date(startValue);
+      const end = new Date(endValue);
+
+      if (isNaN(start.getTime()) || isNaN(end.getTime())) return "-";
 
       const diffMs = end - start;
       const diffDays = diffMs / (1000 * 60 * 60 * 24);
 
-      if (diffDays <= 0) return 1;
-      return Math.ceil(diffDays);
+      if (diffDays <= 0) return "1";
+      return String(Math.ceil(diffDays));
     }
 
-    function getStatusTag(row) {
+    function getDailyStatusTag(row) {
       if (row.is_active) {
         return '<span class="tag tag-active">กำลังพัก</span>';
       }
       return '<span class="tag tag-done">เช็คเอาท์แล้ว</span>';
+    }
+
+    function getReservationStatusTag(status) {
+      const s = String(status || "").toLowerCase();
+      if (s === "checked_out") return '<span class="tag tag-done">checked_out</span>';
+      if (s === "checked_in") return '<span class="tag tag-active">checked_in</span>';
+      return `<span class="tag tag-other">${status || "-"}</span>`;
+    }
+
+    function paymentTypeLabel(value) {
+      const v = String(value || "").trim().toLowerCase();
+
+      if (v === "cash" || v === "เงินสด") return "เงินสด";
+      if (v === "transfer" || v === "โอนเงิน" || v === "โอน") return "โอนเงิน";
+      if (v === "card" || v === "บัตร") return "บัตร";
+      if (v === "paid" || v === "ชำระแล้ว") return "ชำระแล้ว";
+      if (v === "unpaid" || v === "ยังไม่ชำระ") return "ยังไม่ชำระ";
+
+      return value || "-";
     }
 
     function printDailyHistory() {
@@ -445,11 +598,30 @@
       window.print();
     }
 
+    function getGroupDateKey(row) {
+      const reservation = row.reservations || {};
+      const raw = row.check_in_at || reservation.check_in_date || row.created_at || "";
+      if (!raw) return "unknown";
+
+      const d = new Date(raw);
+      if (isNaN(d.getTime())) return "unknown";
+
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, "0");
+      const day = String(d.getDate()).padStart(2, "0");
+      return `${y}-${m}-${day}`;
+    }
+
+    function getGroupDateLabel(dateKey) {
+      if (dateKey === "unknown") return "ไม่ทราบวันที่";
+      return formatDateOnly(dateKey);
+    }
+
     async function loadHistory() {
       hideError();
-
-      const tbody = document.querySelector("#historyTable tbody");
-      tbody.innerHTML = '<tr><td colspan="8">กำลังโหลด...</td></tr>';
+      document.getElementById("dayGroups").innerHTML = `
+        <div class="empty-box">กำลังโหลด...</div>
+      `;
 
       const { data, error } = await db
         .from("daily_checkins")
@@ -464,8 +636,20 @@
           created_at,
           updated_at,
           reservations (
+            id,
             reservation_code,
-            customer_name
+            customer_name,
+            customer_phone,
+            check_in_date,
+            check_out_date,
+            status,
+            note,
+            price_per_night,
+            total_rooms,
+            total_deposit,
+            total_price,
+            payment_type,
+            checkout_note
           )
         `)
         .order("created_at", { ascending: false });
@@ -473,7 +657,9 @@
       if (error) {
         console.error(error);
         showError("โหลดข้อมูลไม่สำเร็จ\n" + (error.message || ""));
-        tbody.innerHTML = '<tr><td colspan="8">โหลดข้อมูลผิดพลาด</td></tr>';
+        document.getElementById("dayGroups").innerHTML = `
+          <div class="empty-box">โหลดข้อมูลผิดพลาด</div>
+        `;
         return;
       }
 
@@ -481,21 +667,55 @@
       renderHistory();
     }
 
+    function renderSummary(rows) {
+      document.getElementById("countAll").textContent = rows.length;
+
+      const activeCount = rows.filter(r => r.is_active === true).length;
+      const doneCount = rows.filter(r => r.is_active === false).length;
+
+      document.getElementById("countActive").textContent = activeCount;
+      document.getElementById("countDone").textContent = doneCount;
+    }
+
+    function groupRowsByDay(rows) {
+      const grouped = {};
+
+      rows.forEach(row => {
+        const key = getGroupDateKey(row);
+        if (!grouped[key]) grouped[key] = [];
+        grouped[key].push(row);
+      });
+
+      return Object.entries(grouped).sort((a, b) => {
+        if (a[0] === "unknown") return 1;
+        if (b[0] === "unknown") return -1;
+        return b[0].localeCompare(a[0]);
+      });
+    }
+
     function renderHistory() {
-      const tbody = document.querySelector("#historyTable tbody");
+      const container = document.getElementById("dayGroups");
       const searchText = (document.getElementById("searchBox").value || "").trim().toLowerCase();
       const statusFilter = document.getElementById("statusFilter").value;
-
-      tbody.innerHTML = "";
 
       let rows = [...allRows];
 
       if (searchText) {
         rows = rows.filter(row => {
+          const reservation = row.reservations || {};
           const room = String(row.room_number || "").toLowerCase();
-          const guest = String(row.guest_name || row.reservations?.customer_name || "").toLowerCase();
-          const code = String(row.reservations?.reservation_code || "").toLowerCase();
-          return room.includes(searchText) || guest.includes(searchText) || code.includes(searchText);
+          const guest = String(row.guest_name || reservation.customer_name || "").toLowerCase();
+          const code = String(reservation.reservation_code || "").toLowerCase();
+          const phone = String(reservation.customer_phone || "").toLowerCase();
+          const reservationId = String(row.reservation_id || reservation.id || "").toLowerCase();
+
+          return (
+            room.includes(searchText) ||
+            guest.includes(searchText) ||
+            code.includes(searchText) ||
+            phone.includes(searchText) ||
+            reservationId.includes(searchText)
+          );
         });
       }
 
@@ -505,29 +725,147 @@
         rows = rows.filter(row => row.is_active === false);
       }
 
+      renderSummary(rows);
+
       if (!rows.length) {
-        tbody.innerHTML = '<tr><td colspan="8">ไม่พบข้อมูล</td></tr>';
+        container.innerHTML = `<div class="empty-box">ไม่พบข้อมูล</div>`;
         return;
       }
 
-      rows.forEach(row => {
-        const guestName = row.guest_name || row.reservations?.customer_name || "-";
-        const reservationCode = row.reservations?.reservation_code || "-";
-        const nights = calcNights(row.check_in_at, row.check_out_at);
+      const groupedRows = groupRowsByDay(rows);
 
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td>${row.room_number || ""}</td>
-          <td>${guestName}</td>
-          <td>${reservationCode}</td>
-          <td>${formatDateTime(row.check_in_at)}</td>
-          <td>${row.check_out_at ? formatDateTime(row.check_out_at) : '<span class="muted">ยังไม่เช็คเอาท์</span>'}</td>
-          <td>${nights || ""}</td>
-          <td>${getStatusTag(row)}</td>
-          <td>${formatDateTime(row.updated_at || row.created_at)}</td>
+      container.innerHTML = groupedRows.map(([dateKey, dayRows]) => {
+        const cardsHtml = dayRows.map(row => {
+          const reservation = row.reservations || {};
+          const guestName = row.guest_name || reservation.customer_name || "-";
+          const nights = calcNights(
+            row.check_in_at,
+            row.check_out_at,
+            reservation.check_in_date,
+            reservation.check_out_date
+          );
+
+          return `
+            <div class="stay-card">
+              <div class="stay-header">
+                <div>
+                  <div class="stay-title">ห้อง ${row.room_number || "-"}</div>
+                  <div class="stay-subtitle">
+                    ${guestName} • รหัสจอง: ${reservation.reservation_code || "-"}
+                  </div>
+                </div>
+                <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                  ${getDailyStatusTag(row)}
+                  ${getReservationStatusTag(reservation.status)}
+                </div>
+              </div>
+
+              <div class="stay-body">
+                <div class="section-grid">
+                  <div class="info-box">
+                    <h3>ข้อมูลลูกค้าและการจอง</h3>
+                    <div class="info-row">
+                      <div class="info-label">Reservation ID</div>
+                      <div class="info-value">${row.reservation_id || reservation.id || "-"}</div>
+                    </div>
+                    <div class="info-row">
+                      <div class="info-label">รหัสจอง</div>
+                      <div class="info-value">${reservation.reservation_code || "-"}</div>
+                    </div>
+                    <div class="info-row">
+                      <div class="info-label">ชื่อลูกค้า</div>
+                      <div class="info-value">${guestName}</div>
+                    </div>
+                    <div class="info-row">
+                      <div class="info-label">เบอร์โทร</div>
+                      <div class="info-value">${reservation.customer_phone || "-"}</div>
+                    </div>
+                    <div class="info-row">
+                      <div class="info-label">จำนวนห้อง</div>
+                      <div class="info-value">${reservation.total_rooms ?? "-"}</div>
+                    </div>
+                  </div>
+
+                  <div class="info-box">
+                    <h3>ข้อมูลการเข้าพัก</h3>
+                    <div class="info-row">
+                      <div class="info-label">Check-in (daily)</div>
+                      <div class="info-value">${formatDateTime(row.check_in_at)}</div>
+                    </div>
+                    <div class="info-row">
+                      <div class="info-label">Check-out (daily)</div>
+                      <div class="info-value">${row.check_out_at ? formatDateTime(row.check_out_at) : '<span class="muted">ยังไม่เช็คเอาท์</span>'}</div>
+                    </div>
+                    <div class="info-row">
+                      <div class="info-label">วันเข้า</div>
+                      <div class="info-value">${formatDateOnly(reservation.check_in_date)}</div>
+                    </div>
+                    <div class="info-row">
+                      <div class="info-label">วันออก</div>
+                      <div class="info-value">${formatDateOnly(reservation.check_out_date)}</div>
+                    </div>
+                    <div class="info-row">
+                      <div class="info-label">จำนวนคืน</div>
+                      <div class="info-value">${nights}</div>
+                    </div>
+                    <div class="info-row">
+                      <div class="info-label">บันทึกล่าสุด</div>
+                      <div class="info-value">${formatDateTime(row.updated_at || row.created_at)}</div>
+                    </div>
+                  </div>
+
+                  <div class="info-box">
+                    <h3>ข้อมูลการเงิน</h3>
+                    <div class="info-row">
+                      <div class="info-label">ราคา/คืน</div>
+                      <div class="info-value money">${formatMoney(reservation.price_per_night)} บาท</div>
+                    </div>
+                    <div class="info-row">
+                      <div class="info-label">ยอดค่าห้อง</div>
+                      <div class="info-value money">${formatMoney(reservation.total_price)} บาท</div>
+                    </div>
+                    <div class="info-row">
+                      <div class="info-label">เงินมัดจำ</div>
+                      <div class="info-value money">${formatMoney(reservation.total_deposit)} บาท</div>
+                    </div>
+                    <div class="info-row">
+                      <div class="info-label">Payment Type</div>
+                      <div class="info-value">${paymentTypeLabel(reservation.payment_type)}</div>
+                    </div>
+                  </div>
+
+                  <div class="info-box">
+                    <h3>หมายเหตุ</h3>
+                    <div class="info-row">
+                      <div class="info-label">หมายเหตุการจอง</div>
+                      <div class="info-value">${reservation.note || "-"}</div>
+                    </div>
+                    <div class="info-row">
+                      <div class="info-label">หมายเหตุ Check-out</div>
+                      <div class="info-value">${reservation.checkout_note || "-"}</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          `;
+        }).join("");
+
+        return `
+          <div class="day-group">
+            <div class="day-header">
+              <div>
+                <div class="day-title">${getGroupDateLabel(dateKey)}</div>
+                <div class="day-sub">แยกข้อมูลตามวันเข้าพัก</div>
+              </div>
+              <div class="day-count">${dayRows.length} รายการ</div>
+            </div>
+            <div class="day-body">
+              ${cardsHtml}
+            </div>
+          </div>
         `;
-        tbody.appendChild(tr);
-      });
+      }).join("");
     }
 
     document.addEventListener("DOMContentLoaded", () => {

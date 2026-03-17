@@ -92,7 +92,8 @@
 
     input[type="text"],
     input[type="number"],
-    select {
+    select,
+    textarea {
       width: 100%;
       padding: 6px 8px;
       margin-top: 4px;
@@ -101,6 +102,12 @@
       border: 1px solid #d6c4ad;
       box-sizing: border-box;
       background: #fff;
+      font-family: "Prompt", Arial, sans-serif;
+    }
+
+    textarea {
+      min-height: 78px;
+      resize: vertical;
     }
 
     button {
@@ -193,6 +200,23 @@
       font-size: 12px;
     }
 
+    .method-badge {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: #f7efe4;
+      color: #6b3b1c;
+      font-size: 11px;
+      font-weight: 700;
+      border: 1px solid #e0d2c0;
+    }
+
+    .detail-cell {
+      white-space: pre-wrap;
+      word-break: break-word;
+      line-height: 1.45;
+    }
+
     @media (max-width: 600px) {
       header {
         padding: 16px 16px 4px;
@@ -238,6 +262,18 @@
       <label>จำนวนเงิน (บาท)</label>
       <input type="number" id="amount" placeholder="เช่น 3000" min="0" step="0.01">
 
+      <label>วิธีชำระเงิน</label>
+      <select id="paymentMethod">
+        <option value="">-- เลือกวิธีชำระเงิน --</option>
+        <option value="cash">เงินสด</option>
+            <option value="transfer">โอนเงิน</option>
+              <option value="card">บัตร</option>
+               <option value="other">อื่น ๆ</option>
+      </select>
+
+      <label>รายละเอียดการชำระเงิน (ถ้ามี)</label>
+      <textarea id="paymentDetail" placeholder="เช่น เลขอ้างอิง, ธนาคาร, เวลาโอน, หมายเหตุเพิ่มเติม"></textarea>
+
       <button onclick="savePayment()">บันทึกการชำระเงิน</button>
       <p id="message" style="color: green; margin-top: 8px; font-size: 13px;"></p>
       <p class="small">
@@ -258,6 +294,8 @@
           <tr>
             <th>ห้อง</th>
             <th>จำนวนเงิน (บาท)</th>
+            <th>วิธีชำระ</th>
+            <th>รายละเอียด</th>
             <th>วันที่และเวลาในการบันทึก</th>
             <th>จัดการ</th>
           </tr>
@@ -280,7 +318,7 @@
     window.db = db;
 
     let activeBookings = [];
-    let currentUserRole = "viewer"; // default
+    let currentUserRole = "viewer";
 
     function formatDateTime(isoString) {
       if (!isoString) return "";
@@ -295,9 +333,22 @@
       });
     }
 
+    function getMethodLabel(method) {
+      const value = String(method || "").trim();
+
+      if (value === "cash") return "เงินสด";
+      if (value === "bank_transfer") return "โอนเงิน";
+      if (value === "promptpay") return "พร้อมเพย์";
+      if (value === "credit_card") return "บัตรเครดิต";
+      if (value === "debit_card") return "บัตรเดบิต";
+      if (value === "other") return "อื่น ๆ";
+
+      if (!value) return "-";
+      return value;
+    }
+
     async function getCurrentUserRole() {
       try {
-        // 1) ลองอ่านจาก storage ก่อน
         const savedRole =
           localStorage.getItem("role") ||
           sessionStorage.getItem("role") ||
@@ -309,7 +360,6 @@
           return savedRole;
         }
 
-        // 2) fallback: อ่านจาก auth + ตาราง user_roles
         const {
           data: { user },
           error: userError
@@ -411,6 +461,8 @@
       const roomSelect = document.getElementById("room");
       const bookingIdStr = roomSelect.value;
       const amountRaw = document.getElementById("amount").value.trim();
+      const paymentMethod = document.getElementById("paymentMethod").value.trim();
+      const paymentDetail = document.getElementById("paymentDetail").value.trim();
       const msg = document.getElementById("message");
 
       msg.textContent = "";
@@ -421,6 +473,7 @@
         msg.textContent = "กรุณาเลือกห้องที่กำลังเช่าอยู่";
         return;
       }
+
       if (!amountRaw) {
         msg.style.color = "red";
         msg.textContent = "กรุณากรอกจำนวนเงิน";
@@ -431,6 +484,12 @@
       if (Number.isNaN(amount) || amount <= 0) {
         msg.style.color = "red";
         msg.textContent = "จำนวนเงินต้องเป็นตัวเลขมากกว่า 0";
+        return;
+      }
+
+      if (!paymentMethod) {
+        msg.style.color = "red";
+        msg.textContent = "กรุณาเลือกวิธีชำระเงิน";
         return;
       }
 
@@ -456,7 +515,9 @@
             room_number: selected.roomNumber,
             year: year,
             month: month,
-            amount: amount
+            amount: amount,
+            payment_method: paymentMethod,
+            payment_detail: paymentDetail || null
           });
 
         if (error) {
@@ -468,7 +529,10 @@
 
         msg.style.color = "green";
         msg.textContent = "บันทึกการชำระเงินเรียบร้อยแล้ว";
+
         document.getElementById("amount").value = "";
+        document.getElementById("paymentMethod").value = "";
+        document.getElementById("paymentDetail").value = "";
 
         await renderPayments();
 
@@ -522,29 +586,34 @@
         if (error) {
           console.error("renderPayments error:", error);
           const tr = document.createElement("tr");
-          tr.innerHTML = `<td colspan="4" style="color:red;">ไม่สามารถดึงข้อมูลการชำระเงินได้: ${error.message}</td>`;
+          tr.innerHTML = `<td colspan="6" style="color:red;">ไม่สามารถดึงข้อมูลการชำระเงินได้: ${error.message}</td>`;
           tbody.appendChild(tr);
           return;
         }
 
         if (!data || data.length === 0) {
           const tr = document.createElement("tr");
-          tr.innerHTML = `<td colspan="4">ยังไม่มีข้อมูลการชำระเงิน</td>`;
+          tr.innerHTML = `<td colspan="6">ยังไม่มีข้อมูลการชำระเงิน</td>`;
           tbody.appendChild(tr);
           return;
         }
 
         data.forEach(p => {
-          if (filterRoom && p.room_number !== filterRoom) return;
+          if (filterRoom && String(p.room_number || "").trim() !== filterRoom) return;
 
           const manageButton = isAdmin()
             ? `<button class="danger-btn" onclick="deletePayment('${p.id}')">ยกเลิกบันทึก</button>`
             : `-`;
 
+          const methodText = getMethodLabel(p.payment_method || p.method || p.payment_option);
+          const detailText = p.payment_detail || p.detail || p.note || "-";
+
           const tr = document.createElement("tr");
           tr.innerHTML = `
             <td>${p.room_number || "-"}</td>
             <td>${(Number(p.amount) || 0).toFixed(2)}</td>
+            <td><span class="method-badge">${methodText}</span></td>
+            <td class="detail-cell">${detailText}</td>
             <td class="time-highlight">${formatDateTime(p.paid_at || p.created_at)}</td>
             <td>${manageButton}</td>
           `;
@@ -553,14 +622,14 @@
 
         if (!tbody.hasChildNodes()) {
           const tr = document.createElement("tr");
-          tr.innerHTML = `<td colspan="4">ไม่พบข้อมูลการชำระเงินของห้องนี้</td>`;
+          tr.innerHTML = `<td colspan="6">ไม่พบข้อมูลการชำระเงินของห้องนี้</td>`;
           tbody.appendChild(tr);
         }
 
       } catch (e) {
         console.error("renderPayments exception:", e);
         const tr = document.createElement("tr");
-        tr.innerHTML = `<td colspan="4" style="color:red;">เกิดข้อผิดพลาดขณะโหลดข้อมูลการชำระเงิน: ${e.message}</td>`;
+        tr.innerHTML = `<td colspan="6" style="color:red;">เกิดข้อผิดพลาดขณะโหลดข้อมูลการชำระเงิน: ${e.message}</td>`;
         tbody.appendChild(tr);
       }
     }

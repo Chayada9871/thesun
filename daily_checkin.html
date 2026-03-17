@@ -100,18 +100,6 @@
       cursor:not-allowed !important;
     }
 
-    .pill{
-      margin-top:8px;
-      padding:10px 12px;
-      border-radius:10px;
-      background:#f7f1e8;
-      border:1px solid #ead9c6;
-      color:#5b3a1f;
-      font-size:13px;
-      font-weight:900;
-      line-height:1.35;
-    }
-
     .warning-text{
       color:red;
       font-size:13px;
@@ -199,6 +187,22 @@
           </div>
         </div>
 
+        <div class="row">
+          <div>
+            <label>ประเภทการชำระเงิน *</label>
+            <select id="paymentType">
+              <option value="">-- กรุณาเลือก --</option>
+              <option value="cash">เงินสด</option>
+              <option value="transfer">โอนเงิน</option>
+              <option value="card">บัตร</option>
+              </select>
+          </div>
+          <div>
+            <label>ประเภทห้อง</label>
+            <input class="locked" type="text" id="roomTypeText" disabled>
+          </div>
+        </div>
+
         <h2>เลือกห้องว่างเพื่อเช็คอิน</h2>
 
         <div class="row">
@@ -209,11 +213,6 @@
               <button type="button" class="sub-btn" id="chooseRoomBtn">เลือกจากแผนผังห้อง</button>
             </div>
             <div class="note">เลือกจาก room plan แล้วกลับมาหน้านี้ ข้อมูลที่กรอกไว้จะไม่หาย</div>
-          </div>
-
-          <div>
-            <label>ประเภทห้อง</label>
-            <input class="locked" type="text" id="roomTypeText" disabled>
           </div>
         </div>
 
@@ -252,9 +251,9 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
-     const SUPABASE_URL = "https://muebjorbqxuppzaixykg.supabase.co";
+    const SUPABASE_URL = "https://muebjorbqxuppzaixykg.supabase.co";
     const SUPABASE_ANON_KEY = "sb_publishable_mybDlaBdUg9SN8nems0_Cg_QiVdgwY_";
-   const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     let roomItems = [];
     let roomTypeByRoom = {};
@@ -308,6 +307,7 @@
         guestNameForCheckin: document.getElementById("guestNameForCheckin").value || "",
         roomNumberInput: document.getElementById("roomNumberInput").value || "",
         roomGuestNameInput: document.getElementById("roomGuestNameInput").value || "",
+        paymentType: document.getElementById("paymentType").value || "",
         roomItems: roomItems,
         derivedRoomType: derivedRoomType,
         lastPickedRoom: lastPickedRoom
@@ -324,6 +324,7 @@
         document.getElementById("guestNameForCheckin").value = d.guestNameForCheckin || "";
         document.getElementById("roomNumberInput").value = d.roomNumberInput || "";
         document.getElementById("roomGuestNameInput").value = d.roomGuestNameInput || "";
+        document.getElementById("paymentType").value = d.paymentType || "";
         roomItems = Array.isArray(d.roomItems) ? d.roomItems : [];
         derivedRoomType = d.derivedRoomType || "";
         lastPickedRoom = d.lastPickedRoom || "";
@@ -482,6 +483,7 @@
           check_out_date,
           status,
           note,
+          payment_type,
           reservation_rooms (
             room_type,
             room_count
@@ -502,6 +504,7 @@
       document.getElementById("checkInDate").value = data.check_in_date || "";
       document.getElementById("expectedCheckOut").value = data.check_out_date || "";
       document.getElementById("bookingNoteView").value = data.note || "";
+      document.getElementById("paymentType").value = data.payment_type || "";
 
       const card = document.getElementById("reservationInfoCard");
       const content = document.getElementById("reservationInfoContent");
@@ -520,6 +523,7 @@
           <div class="res-card-item"><div class="res-label">ชื่อลูกค้า</div><div class="res-value">${data.customer_name || "-"}</div></div>
           <div class="res-card-item"><div class="res-label">โทรศัพท์</div><div class="res-value">${data.customer_phone || "-"}</div></div>
           <div class="res-card-item"><div class="res-label">สถานะ</div><div class="res-value">${data.status || "-"}</div></div>
+          <div class="res-card-item"><div class="res-label">Payment Type</div><div class="res-value">${data.payment_type || "-"}</div></div>
         </div>
         <div class="res-card-row" style="margin-top:6px;">
           <div class="res-card-item">
@@ -542,7 +546,7 @@
       showErr("");
     }
 
-    async function saveCheckinMultiSupabase({ group }){
+    async function saveCheckinMultiSupabase({ group, paymentType }){
       showErr("");
 
       const rows = roomItems.map(it => ({
@@ -577,12 +581,15 @@
 
       const upRes = await db
         .from("reservations")
-        .update({ status: "checked_in" })
+        .update({
+          status: "checked_in",
+          payment_type: paymentType
+        })
         .eq("id", group.reservationId);
 
       if (upRes.error){
         console.warn(upRes.error);
-        alert("เช็คอินสำเร็จ แต่ update reservation.status ไม่สำเร็จ: " + upRes.error.message);
+        alert("เช็คอินสำเร็จ แต่ update reservation.status / payment_type ไม่สำเร็จ: " + upRes.error.message);
       }
 
       return true;
@@ -626,10 +633,11 @@
         saveDraft();
       });
 
-      ["note","guestNameForCheckin","roomGuestNameInput"]
+      ["note","guestNameForCheckin","roomGuestNameInput","paymentType"]
         .forEach(id=>{
           const el = document.getElementById(id);
           if(el) el.addEventListener("input", saveDraft);
+          if(el) el.addEventListener("change", saveDraft);
         });
 
       await loadReservationData();
@@ -699,6 +707,7 @@
         const mainGuestName =
           document.getElementById("guestNameForCheckin").value.trim() ||
           document.getElementById("guestName").value.trim();
+        const paymentType = document.getElementById("paymentType").value;
 
         if(!reservationId){
           showErr("ไม่พบ reservation_id");
@@ -707,6 +716,11 @@
 
         if(!mainGuestName){
           showErr("กรุณากรอกชื่อผู้เข้าพัก");
+          return;
+        }
+
+        if(!paymentType){
+          showErr("กรุณาเลือกประเภทการชำระเงิน");
           return;
         }
 
@@ -728,7 +742,7 @@
           mainGuestName
         };
 
-        const ok = await saveCheckinMultiSupabase({ group });
+        const ok = await saveCheckinMultiSupabase({ group, paymentType });
         if(!ok) return;
 
         clearDraft();

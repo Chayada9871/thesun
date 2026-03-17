@@ -87,12 +87,14 @@
       display: block;
       margin-top: 8px;
       font-size: 13px;
+      font-weight: 600;
     }
 
     input[type="text"],
     input[type="number"],
     input[type="month"],
-    select {
+    select,
+    textarea {
       width: 100%;
       padding: 6px 8px;
       margin-top: 4px;
@@ -101,6 +103,12 @@
       border: 1px solid #d6c4ad;
       box-sizing: border-box;
       background: #fff;
+      font-family: "Prompt", Arial, sans-serif;
+    }
+
+    textarea {
+      min-height: 70px;
+      resize: vertical;
     }
 
     button {
@@ -185,10 +193,23 @@
       box-shadow: 0 3px 6px rgba(0,0,0,0.2);
     }
 
+    .edit-btn {
+      margin-top: 0;
+      margin-right: 6px;
+      padding: 5px 10px;
+      font-size: 11px;
+    }
+
     .time-highlight {
       font-weight: 600;
       color: #2b3a67;
       font-size: 12px;
+    }
+
+    .note-cell {
+      white-space: pre-wrap;
+      line-height: 1.45;
+      min-width: 140px;
     }
 
     @media (max-width: 600px) {
@@ -196,15 +217,19 @@
         padding: 16px 16px 4px;
         flex-wrap: wrap;
       }
+
       .page {
         padding: 8px 16px 28px;
       }
+
       .card {
         padding: 14px 14px 18px;
       }
+
       table {
         font-size: 12px;
       }
+
       th, td {
         padding: 6px;
       }
@@ -241,11 +266,20 @@
       <label>ค่าไฟฟ้า (บาท)</label>
       <input type="number" id="electricity" placeholder="เช่น 800" min="0" step="0.01">
 
+      <label>หมายเหตุค่าไฟฟ้า</label>
+      <textarea id="electricityNote" placeholder="เช่น ใช้แอร์หนัก / มีการซ่อมอุปกรณ์ไฟฟ้า / คิดเพิ่มกรณีพิเศษ"></textarea>
+
       <label>ค่าน้ำ (บาท)</label>
       <input type="number" id="water" placeholder="เช่น 200" min="0" step="0.01">
 
+      <label>หมายเหตุค่าน้ำ</label>
+      <textarea id="waterNote" placeholder="เช่น มีการใช้น้ำเพิ่ม / ล้างแอร์ / ซ่อมห้องน้ำ"></textarea>
+
       <label>ค่าใช้จ่ายอื่น ๆ (บาท)</label>
       <input type="number" id="other" placeholder="เช่น 150" min="0" step="0.01">
+
+      <label>หมายเหตุค่าใช้จ่ายอื่น ๆ</label>
+      <textarea id="otherNote" placeholder="เช่น ค่าซ่อม / ค่าทำความสะอาด / ค่าปรับ / ค่าอุปกรณ์เพิ่มเติม"></textarea>
 
       <button id="saveBtn" onclick="saveUtilityBill()">บันทึกค่าใช้จ่าย</button>
       <button id="cancelEditBtn" class="secondary-btn" style="display:none;" onclick="cancelEdit()">ยกเลิกการแก้ไข</button>
@@ -266,8 +300,11 @@
             <th>ห้อง</th>
             <th>เดือน/ปี</th>
             <th>ไฟฟ้า</th>
+            <th>หมายเหตุค่าไฟ</th>
             <th>น้ำ</th>
+            <th>หมายเหตุค่าน้ำ</th>
             <th>อื่น ๆ</th>
+            <th>หมายเหตุอื่น ๆ</th>
             <th>รวม (บาท)</th>
             <th>บันทึกเมื่อ</th>
             <th>จัดการ</th>
@@ -277,7 +314,7 @@
       </table>
 
       <p class="small">
-        ถ้าบันทึกผิด สามารถกดปุ่ม “ลบ” เพื่อลบรายการนั้นออกจากระบบ หรือกดปุ่ม “แก้ไข” เพื่อแก้ไขตัวเลขได้
+        ถ้าบันทึกผิด สามารถกดปุ่ม “ลบ” เพื่อลบรายการนั้นออกจากระบบ หรือกดปุ่ม “แก้ไข” เพื่อแก้ไขตัวเลขและหมายเหตุได้
       </p>
     </div>
   </div>
@@ -293,6 +330,15 @@
 
     let editingBillId = null;
     let currentBills = [];
+
+    function escapeHtml(value) {
+      return String(value || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
 
     function formatDateTime(value) {
       if (!value) return "-";
@@ -391,6 +437,11 @@
       const elecStr = document.getElementById("electricity").value.trim();
       const waterStr = document.getElementById("water").value.trim();
       const otherStr = document.getElementById("other").value.trim();
+
+      const electricityNote = document.getElementById("electricityNote").value.trim();
+      const waterNote = document.getElementById("waterNote").value.trim();
+      const otherNote = document.getElementById("otherNote").value.trim();
+
       const msg = document.getElementById("message");
 
       msg.textContent = "";
@@ -400,6 +451,7 @@
         msg.textContent = "กรุณาเลือกห้องที่ต้องการบันทึก";
         return;
       }
+
       if (!billMonth) {
         msg.textContent = "กรุณาเลือกเดือน/ปี ที่ต้องการบันทึกค่าใช้จ่าย";
         return;
@@ -457,6 +509,9 @@
               water,
               other,
               total,
+              electricity_note: electricityNote,
+              water_note: waterNote,
+              other_note: otherNote,
               updated_at: new Date().toISOString()
             })
             .eq("id", editingBillId);
@@ -479,7 +534,10 @@
               electricity: elec,
               water,
               other,
-              total
+              total,
+              electricity_note: electricityNote,
+              water_note: waterNote,
+              other_note: otherNote
             });
 
           if (error) {
@@ -507,6 +565,9 @@
       document.getElementById("electricity").value = "";
       document.getElementById("water").value = "";
       document.getElementById("other").value = "";
+      document.getElementById("electricityNote").value = "";
+      document.getElementById("waterNote").value = "";
+      document.getElementById("otherNote").value = "";
       document.getElementById("saveBtn").textContent = "บันทึกค่าใช้จ่าย";
       document.getElementById("editInfo").style.display = "none";
       document.getElementById("cancelEditBtn").style.display = "none";
@@ -567,6 +628,9 @@
       document.getElementById("electricity").value = bill.electricity || 0;
       document.getElementById("water").value = bill.water || 0;
       document.getElementById("other").value = bill.other || 0;
+      document.getElementById("electricityNote").value = bill.electricity_note || "";
+      document.getElementById("waterNote").value = bill.water_note || "";
+      document.getElementById("otherNote").value = bill.other_note || "";
 
       document.getElementById("saveBtn").textContent = "อัปเดตค่าใช้จ่าย";
       document.getElementById("editInfo").style.display = "block";
@@ -589,14 +653,14 @@
         if (error) {
           console.error("renderUtilityBills error:", error);
           const tr = document.createElement("tr");
-          tr.innerHTML = `<td colspan="8" style="color:red;">ไม่สามารถดึงข้อมูลค่าใช้จ่ายได้: ${error.message || ""}</td>`;
+          tr.innerHTML = `<td colspan="11" style="color:red;">ไม่สามารถดึงข้อมูลค่าใช้จ่ายได้: ${escapeHtml(error.message || "")}</td>`;
           tbody.appendChild(tr);
           return;
         }
 
         if (!data || data.length === 0) {
           const tr = document.createElement("tr");
-          tr.innerHTML = `<td colspan="8">ยังไม่มีข้อมูลค่าใช้จ่าย</td>`;
+          tr.innerHTML = `<td colspan="11">ยังไม่มีข้อมูลค่าใช้จ่าย</td>`;
           tbody.appendChild(tr);
           currentBills = [];
           return;
@@ -611,7 +675,7 @@
 
         if (bills.length === 0) {
           const tr = document.createElement("tr");
-          tr.innerHTML = `<td colspan="8">ไม่พบข้อมูลค่าใช้จ่ายของห้องนี้</td>`;
+          tr.innerHTML = `<td colspan="11">ไม่พบข้อมูลค่าใช้จ่ายของห้องนี้</td>`;
           tbody.appendChild(tr);
           return;
         }
@@ -620,15 +684,18 @@
           const ym = `${String(b.month).padStart(2, "0")}/${b.year}`;
           const tr = document.createElement("tr");
           tr.innerHTML = `
-            <td>${b.room || "-"}</td>
-            <td>${ym}</td>
+            <td>${escapeHtml(b.room || "-")}</td>
+            <td>${escapeHtml(ym)}</td>
             <td>${Number(b.electricity || 0).toFixed(2)}</td>
+            <td class="note-cell">${escapeHtml(b.electricity_note || "-")}</td>
             <td>${Number(b.water || 0).toFixed(2)}</td>
+            <td class="note-cell">${escapeHtml(b.water_note || "-")}</td>
             <td>${Number(b.other || 0).toFixed(2)}</td>
+            <td class="note-cell">${escapeHtml(b.other_note || "-")}</td>
             <td><strong>${Number(b.total || 0).toFixed(2)}</strong></td>
-            <td class="time-highlight">${formatDateTime(b.updated_at || b.created_at)}</td>
+            <td class="time-highlight">${escapeHtml(formatDateTime(b.updated_at || b.created_at))}</td>
             <td>
-              <button onclick="editUtilityBill(${b.id})">แก้ไข</button>
+              <button class="edit-btn" onclick="editUtilityBill(${b.id})">แก้ไข</button>
               <button class="danger-btn" onclick="deleteUtilityBill(${b.id})">ลบ</button>
             </td>
           `;
@@ -638,7 +705,7 @@
       } catch (e) {
         console.error("renderUtilityBills exception:", e);
         const tr = document.createElement("tr");
-        tr.innerHTML = `<td colspan="8" style="color:red;">เกิดข้อผิดพลาดขณะโหลดข้อมูลค่าใช้จ่าย</td>`;
+        tr.innerHTML = `<td colspan="11" style="color:red;">เกิดข้อผิดพลาดขณะโหลดข้อมูลค่าใช้จ่าย</td>`;
         tbody.appendChild(tr);
       }
     }

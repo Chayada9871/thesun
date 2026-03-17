@@ -5,21 +5,45 @@
   <title>สรุปภาพรวม - ระบบอพาร์ทเมนต์</title>
   <script src="storage.js"></script>
   <style>
+    :root {
+      --bg: #f4eee7;
+      --card: #ffffff;
+      --line: #e4d6c4;
+      --line-soft: #e9ddcf;
+      --text: #6b3b1c;
+      --sub: #7a5a43;
+      --primary: #a66a2b;
+      --primary-dark: #905825;
+      --navy: #2b3a67;
+      --navy-dark: #1f2c50;
+      --green-bg: #eaf7ee;
+      --green-text: #1f7a3d;
+      --red-bg: #fff1f0;
+      --red-text: #c0392b;
+      --yellow-bg: #fff8e6;
+      --yellow-text: #b7791f;
+      --shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       font-family: "Prompt", Arial, sans-serif;
       margin: 0;
       padding: 0;
-      background: #f4eee7;
-      color: #6b3b1c;
+      background: var(--bg);
+      color: var(--text);
     }
 
     header {
-      max-width: 980px;
+      max-width: 1180px;
       margin: 0 auto;
-      padding: 20px 24px 8px;
+      padding: 18px 24px 8px;
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
       box-sizing: border-box;
       flex-wrap: wrap;
     }
@@ -31,12 +55,13 @@
       color: #7b4a23;
     }
 
-    .back-btn {
+    .back-btn,
+    .print-btn,
+    .action-btn {
       display: inline-flex;
       align-items: center;
       gap: 6px;
       padding: 8px 16px;
-      background: #a66a2b;
       color: #fff;
       border: none;
       border-radius: 999px;
@@ -45,6 +70,29 @@
       cursor: pointer;
       box-shadow: 0 2px 4px rgba(0,0,0,0.18);
       transition: background 0.15s ease, transform 0.12s ease, box-shadow 0.15s ease;
+      font-family: inherit;
+    }
+
+    .back-btn,
+    .action-btn {
+      background: var(--primary);
+    }
+
+    .back-btn:hover,
+    .action-btn:hover {
+      background: var(--primary-dark);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+
+    .print-btn {
+      background: var(--navy);
+    }
+
+    .print-btn:hover {
+      background: var(--navy-dark);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
     }
 
     .back-btn span.arrow {
@@ -52,46 +100,18 @@
       line-height: 1;
     }
 
-    .back-btn:hover {
-      background: #905825;
-      transform: translateY(-1px);
-      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-    }
-
-    .print-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 8px 16px;
-      background: #2b3a67;
-      color: #fff;
-      border: none;
-      border-radius: 999px;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.18);
-      transition: background 0.15s ease, transform 0.12s ease, box-shadow 0.15s ease;
-    }
-
-    .print-btn:hover {
-      background: #1f2c50;
-      transform: translateY(-1px);
-      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-    }
-
     .page {
-      max-width: 980px;
+      max-width: 1180px;
       margin: 0 auto;
       padding: 8px 24px 40px;
       box-sizing: border-box;
     }
 
     .card {
-      background: #ffffff;
-      padding: 18px 18px 20px;
-      border-radius: 10px;
-      box-shadow: 0 3px 8px rgba(0,0,0,0.08);
+      background: var(--card);
+      padding: 16px 16px 18px;
+      border-radius: 12px;
+      box-shadow: var(--shadow);
       border: 1px solid #e0d2c0;
       margin-bottom: 16px;
     }
@@ -105,6 +125,8 @@
     .card p {
       font-size: 13px;
       margin: 4px 0 10px;
+      color: var(--sub);
+      line-height: 1.55;
     }
 
     .summary-grid {
@@ -115,79 +137,91 @@
 
     .summary-item {
       background: #faf7f2;
-      border-radius: 8px;
-      padding: 10px 12px;
+      border-radius: 10px;
+      padding: 12px;
       border: 1px solid #e0d2c0;
     }
 
     .summary-label {
       font-size: 12px;
       color: #755137;
+      line-height: 1.45;
     }
 
     .summary-value {
-      font-size: 20px;
+      font-size: 21px;
       font-weight: 700;
-      margin-top: 4px;
-      color: #2b3a67;
+      margin-top: 6px;
+      color: var(--navy);
+      line-height: 1.2;
+    }
+
+    .summary-value.negative {
+      color: var(--red-text);
+    }
+
+    .summary-value.positive {
+      color: #1f7a3d;
     }
 
     label {
       display: inline-block;
       margin-top: 6px;
       font-size: 13px;
-      color: #6b3b1c;
+      color: var(--text);
     }
 
     input, select {
-      padding: 4px 8px;
+      padding: 6px 8px;
       font-size: 13px;
       margin-left: 4px;
-      border-radius: 4px;
+      border-radius: 6px;
       border: 1px solid #d6c4ad;
       background: #fff;
       box-sizing: border-box;
+      font-family: inherit;
     }
 
-    button {
-      margin-top: 8px;
-      padding: 7px 16px;
-      background: #a66a2b;
-      color: white;
-      border: none;
-      border-radius: 999px;
-      cursor: pointer;
-      font-size: 13px;
-      font-weight: 600;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.18);
-      transition: background 0.15s ease, transform 0.12s ease, box-shadow 0.15s ease;
+    .control-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 8px;
     }
 
-    button:hover {
-      background: #905825;
-      transform: translateY(-1px);
-      box-shadow: 0 3px 6px rgba(0,0,0,0.22);
+    .table-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      margin-top: 10px;
+      background: #fff;
     }
 
     table {
       width: 100%;
       border-collapse: collapse;
-      margin-top: 10px;
       font-size: 13px;
+      min-width: 980px;
       background: #fff;
-      border-radius: 8px;
-      overflow: hidden;
     }
 
     th, td {
-      border: 1px solid #e4d6c4;
+      border-bottom: 1px solid var(--line-soft);
       padding: 8px;
       text-align: left;
+      vertical-align: top;
     }
 
     th {
       background: #f0e2d2;
       font-weight: 600;
+      color: #6d4020;
+      white-space: nowrap;
+    }
+
+    tr:hover td {
+      background: #fffaf6;
     }
 
     .small {
@@ -204,7 +238,12 @@
     }
 
     .highlight-negative {
-      color: #c0392b;
+      color: var(--red-text);
+      font-weight: 700;
+    }
+
+    .highlight-positive {
+      color: var(--green-text);
       font-weight: 700;
     }
 
@@ -215,20 +254,49 @@
       color: #555;
     }
 
-    @media (max-width: 600px) {
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .pill-success {
+      background: var(--green-bg);
+      color: var(--green-text);
+    }
+
+    .pill-danger {
+      background: var(--red-bg);
+      color: var(--red-text);
+    }
+
+    .pill-warning {
+      background: var(--yellow-bg);
+      color: var(--yellow-text);
+    }
+
+    @media (max-width: 700px) {
       header {
         padding: 16px 16px 4px;
-        flex-wrap: wrap;
       }
+
       .page {
         padding: 8px 16px 28px;
       }
+
       .card {
-        padding: 14px 14px 18px;
+        padding: 14px 14px 16px;
       }
+
       table {
         font-size: 12px;
       }
+
       th, td {
         padding: 6px;
       }
@@ -242,7 +310,7 @@
 
       .back-btn,
       .print-btn,
-      button,
+      .action-btn,
       label,
       input,
       select {
@@ -285,7 +353,8 @@
       .summary-label,
       .summary-value,
       .small,
-      .highlight-negative {
+      .highlight-negative,
+      .highlight-positive {
         color: #000 !important;
       }
 
@@ -326,7 +395,7 @@
 
   <div class="page">
     <div class="card">
-      <h2>สรุปตัวเลขสำคัญ (ถึงวันนี้)</h2>
+      <h2>สรุปตัวเลขสำคัญ</h2>
       <div class="print-meta" id="printMeta"></div>
 
       <div class="summary-grid">
@@ -334,77 +403,156 @@
           <div class="summary-label">จำนวนห้องทั้งหมดในระบบ</div>
           <div class="summary-value" id="totalRooms">0</div>
         </div>
+
         <div class="summary-item">
           <div class="summary-label">จำนวนห้องที่กำลังเช่าอยู่</div>
           <div class="summary-value" id="activeRooms">0</div>
         </div>
+
         <div class="summary-item">
           <div class="summary-label">จำนวนห้องที่สิ้นสุดการเช่าแล้ว</div>
           <div class="summary-value" id="stoppedRooms">0</div>
         </div>
+
         <div class="summary-item">
-          <div class="summary-label">รายได้จากการชำระเงินทั้งหมด</div>
-          <div class="summary-value" id="totalIncome">0 บาท</div>
+          <div class="summary-label">ยอดที่ควรมีในระบบทั้งหมด</div>
+          <div class="summary-value" id="totalExpected">0 บาท</div>
         </div>
+
         <div class="summary-item">
-          <div class="summary-label">
-            ยอดค้างชำระรวม (ค่าเช่า + ค่าน้ำ/ไฟ/อื่น ๆ ถึงเดือนปัจจุบัน)
-          </div>
-          <div class="summary-value" id="totalUnpaid">0 บาท</div>
+          <div class="summary-label">ยอดที่ชำระแล้วทั้งหมด</div>
+          <div class="summary-value positive" id="totalIncome">0 บาท</div>
+        </div>
+
+        <div class="summary-item">
+          <div class="summary-label">ยอดค้างชำระรวมทั้งหมด</div>
+          <div class="summary-value negative" id="totalUnpaid">0 บาท</div>
         </div>
       </div>
+
       <p class="small" style="margin-top:10px;">
-        ยอดค้างชำระรวมคำนวณจากค่าเช่ารายเดือน
-        <strong>บวกกับบิลค่าน้ำ/ค่าไฟ/อื่น ๆ</strong>
-        ตั้งแต่เดือนที่เริ่มเช่าถึงเดือนปัจจุบัน แล้วหักด้วยยอดชำระเงินทั้งหมดของห้องนั้น
+        หน้านี้คำนวณจาก <strong>ค่าเช่ารายเดือน + ค่าใช้จ่ายเพิ่มเติม + เงินประกัน</strong> ของแต่ละห้อง
+        แล้วเทียบกับ <strong>ยอดชำระจริงจากตาราง payments</strong>
+        เพื่อแสดงว่าเงินที่ควรได้รับ, เงินที่จ่ายแล้ว, และเงินที่ยังไม่จ่าย มีเท่าไร
       </p>
     </div>
 
     <div class="card">
       <h2>รายได้รายเดือนตามปีที่เลือก</h2>
-      <div>
+
+      <div class="control-row">
         <label>
           ปี (ค.ศ.):
           <input type="number" id="yearInput" style="width:100px;">
         </label>
-        <button onclick="renderMonthlyIncome()">แสดงรายได้รายเดือน</button>
+        <button class="action-btn" onclick="renderYearlySections()">แสดงข้อมูลปีนี้</button>
       </div>
+
       <p class="small">
-        ตารางด้านล่างจะแสดงยอดเงินที่บันทึกในหน้า “บันทึกการชำระเงิน” แยกตามเดือนของปีที่เลือก
+        ตารางนี้แสดงยอดที่ถูกบันทึกว่า “จ่ายแล้ว” ในตาราง payments แยกตามเดือนของปีที่เลือก
       </p>
 
-      <table id="monthlyTable">
-        <thead>
-          <tr>
-            <th>เดือน</th>
-            <th class="text-right">รายได้รวม (บาท)</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-      <p class="small">
-        หมายเหตุ: เป็นยอดที่บันทึกในระบบเท่านั้น ไม่ได้หักค่าค้างชำระ/เครดิตในตารางนี้
-      </p>
+      <div class="table-wrap">
+        <table id="monthlyTable">
+          <thead>
+            <tr>
+              <th>เดือน</th>
+              <th class="text-right">ยอดชำระแล้ว (บาท)</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
     </div>
 
     <div class="card">
-      <h2>ยอดค้างชำระรายห้อง (ห้องที่กำลังเช่าอยู่)</h2>
-      <table id="unpaidTable">
-        <thead>
-          <tr>
-            <th>ห้อง</th>
-            <th>ผู้เช่า</th>
-            <th class="text-right">ค่าเช่าต่อเดือน (บาท)</th>
-            <th class="text-center">จำนวนเดือนที่คิด</th>
-            <th class="text-right">ยอดที่ควรจ่ายรวม</th>
-            <th class="text-right">ยอดที่ชำระแล้วรวม (บาท)</th>
-            <th class="text-right">ยอดค้างชำระ (บาท)</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
+      <h2>ยอดที่ควรได้รับรายเดือนของปีที่เลือก</h2>
       <p class="small">
-        หากยอดค้างชำระเป็น 0 บาท แสดงว่า ณ วันนี้ ห้องนั้นไม่มีหนี้ค้าง
+        ตารางนี้แสดงว่าในแต่ละเดือนของปีที่เลือก ระบบควรได้รับเงินเท่าไร โดยแยกเป็นค่าเช่า ค่าใช้จ่ายเพิ่มเติม และเงินประกัน
+      </p>
+
+      <div class="table-wrap">
+        <table id="monthlyExpectedTable">
+          <thead>
+            <tr>
+              <th>เดือน</th>
+              <th class="text-right">ค่าเช่าที่ควรได้รับ</th>
+              <th class="text-right">ค่าใช้จ่ายเพิ่มที่ควรได้รับ</th>
+              <th class="text-right">เงินประกันที่ควรได้รับ</th>
+              <th class="text-right">รวมที่ควรได้รับ</th>
+              <th class="text-right">จ่ายจริง</th>
+              <th class="text-right">ส่วนต่าง</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>สรุปยอดตามประเภทของเงินที่ควรได้รับ</h2>
+      <p class="small">
+        ตารางนี้สรุปยอดรวมทั้งปีของปีที่เลือก แยกตามประเภทที่ควรได้รับ
+      </p>
+
+      <div class="table-wrap">
+        <table id="paymentTypeExpectedTable">
+          <thead>
+            <tr>
+              <th>ประเภท</th>
+              <th class="text-right">ยอดที่ควรได้รับ (บาท)</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>สรุปยอดจ่ายจริงตามวิธีชำระ</h2>
+      <p class="small">
+        ตารางนี้รวมยอดที่จ่ายจริงจาก payments แยกตามวิธีชำระ เช่น เงินสด โอน ฯลฯ ของปีที่เลือก
+      </p>
+
+      <div class="table-wrap">
+        <table id="paymentMethodTable">
+          <thead>
+            <tr>
+              <th>วิธีชำระ</th>
+              <th class="text-right">ยอดที่จ่ายจริง (บาท)</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>สถานะการชำระเงินรายห้อง</h2>
+
+      <div class="table-wrap">
+        <table id="unpaidTable">
+          <thead>
+            <tr>
+              <th>ห้อง</th>
+              <th>ผู้เช่า</th>
+              <th>สถานะสัญญา</th>
+              <th class="text-right">ค่าเช่าต่อเดือน</th>
+              <th class="text-center">จำนวนเดือนที่คิด</th>
+              <th class="text-right">ค่าใช้จ่ายเพิ่ม</th>
+              <th class="text-right">เงินประกัน</th>
+              <th class="text-right">ยอดที่ควรจ่าย</th>
+              <th class="text-right">ยอดที่จ่ายแล้ว</th>
+              <th class="text-right">ยอดค้างชำระ</th>
+              <th class="text-center">สถานะการจ่าย</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+
+      <p class="small">
+        ตารางนี้รวมทั้งห้องที่ยังเช่าอยู่และห้องที่สิ้นสุดการเช่าแล้ว เพื่อให้เห็นว่าแต่ละห้องควรมีเงินเท่าไร จ่ายแล้วเท่าไร และยังค้างเท่าไร
       </p>
     </div>
   </div>
@@ -417,6 +565,9 @@
     const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     let paymentsCache = null;
+    let bookingsCache = [];
+    let extraBillsCache = [];
+    let roomsCache = [];
 
     function formatMoney(num) {
       const n = Number(num) || 0;
@@ -433,7 +584,7 @@
         p.roomNo ??
         p.roomNumber ??
         ""
-      );
+      ).trim();
     }
 
     function getPaymentAmount(p) {
@@ -442,12 +593,33 @@
       return Number.isNaN(amt) ? 0 : amt;
     }
 
+    function getPaymentMethodName(p) {
+      return String(
+        p.payment_method ??
+        p.method ??
+        "ไม่ระบุ"
+      ).trim() || "ไม่ระบุ";
+    }
+
     function countMonthsInclusive(startDate, endDate) {
       const y1 = startDate.getFullYear();
       const m1 = startDate.getMonth();
       const y2 = endDate.getFullYear();
       const m2 = endDate.getMonth();
       return (y2 - y1) * 12 + (m2 - m1) + 1;
+    }
+
+    function getStatusPill(expected, paid, unpaid) {
+      if (expected <= 0) {
+        return `<span class="pill pill-warning">ไม่มีรอบชำระ</span>`;
+      }
+      if (paid <= 0) {
+        return `<span class="pill pill-danger">ยังไม่จ่าย</span>`;
+      }
+      if (unpaid <= 0) {
+        return `<span class="pill pill-success">จ่ายครบ</span>`;
+      }
+      return `<span class="pill pill-warning">จ่ายบางส่วน</span>`;
     }
 
     function printSummaryPage() {
@@ -480,12 +652,129 @@
       return paymentsCache;
     }
 
-    async function initSummary() {
+    function getBookingEndMonth(booking, today) {
+      let endDate = new Date(today.getFullYear(), today.getMonth(), 1);
+
+      if (booking.stopped_at) {
+        const stopped = new Date(String(booking.stopped_at).split("T")[0] + "T00:00:00");
+        if (!isNaN(stopped.getTime())) {
+          endDate = new Date(stopped.getFullYear(), stopped.getMonth(), 1);
+        }
+      } else if (booking.checkout_date) {
+        const checkout = new Date(String(booking.checkout_date).split("T")[0] + "T00:00:00");
+        if (!isNaN(checkout.getTime())) {
+          const checkoutMonth = new Date(checkout.getFullYear(), checkout.getMonth(), 1);
+          if (checkoutMonth < endDate) endDate = checkoutMonth;
+        }
+      }
+
+      return endDate;
+    }
+
+    function getSelectedYear() {
+      const yearStr = document.getElementById("yearInput").value.trim();
+      const year = parseInt(yearStr, 10);
+      return Number.isNaN(year) ? null : year;
+    }
+
+    function getMonthName(m) {
+      const monthNames = [
+        "", "มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน",
+        "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"
+      ];
+      return `${monthNames[m]} (${String(m).padStart(2, "0")})`;
+    }
+
+    function buildExpectedPerMonth(year) {
       const today = new Date();
 
-      let rooms = [];
-      let bookings = [];
-      let extraBills = [];
+      const result = {};
+      for (let m = 1; m <= 12; m++) {
+        result[m] = {
+          rent: 0,
+          extra: 0,
+          deposit: 0,
+          totalExpected: 0,
+          actualPaid: 0,
+          diff: 0
+        };
+      }
+
+      bookingsCache.forEach(b => {
+        if (b.rent_type !== "monthly") return;
+
+        const roomNo = String(b.room_number || "").trim();
+        if (!roomNo) return;
+
+        const startStr = b.checkin_date || "";
+        if (!startStr) return;
+
+        const startDate = new Date(startStr + "T00:00:00");
+        if (isNaN(startDate.getTime())) return;
+
+        const startMonthDate = new Date(startDate.getFullYear(), startDate.getMonth(), 1);
+        const endMonthDate = getBookingEndMonth(b, today);
+        if (endMonthDate < startMonthDate) return;
+
+        const rent = Number(b.monthly_rent || 0) || 0;
+        const depositAmount = Number(b.deposit ?? 3000) || 3000;
+
+        let cursor = new Date(startMonthDate);
+        while (cursor <= endMonthDate) {
+          const y = cursor.getFullYear();
+          const m = cursor.getMonth() + 1;
+
+          if (y === year && result[m]) {
+            result[m].rent += rent;
+          }
+
+          cursor.setMonth(cursor.getMonth() + 1);
+        }
+
+        if (startMonthDate.getFullYear() === year) {
+          const firstMonth = startMonthDate.getMonth() + 1;
+          result[firstMonth].deposit += depositAmount;
+        }
+      });
+
+      extraBillsCache.forEach(b => {
+        const by = parseInt(b.year, 10);
+        const bm = parseInt(b.month, 10);
+        if (by !== year || Number.isNaN(bm) || !result[bm]) return;
+
+        const totalField = Number(b.total || 0);
+        if (!Number.isNaN(totalField) && totalField > 0) {
+          result[bm].extra += totalField;
+        } else {
+          const waterBill = Number(b.water || b.water_bill || 0);
+          const elecBill = Number(b.electricity || b.electric || b.electric_bill || 0);
+          const otherBill = Number(b.other || b.other_bill || 0);
+
+          if (!Number.isNaN(waterBill)) result[bm].extra += waterBill;
+          if (!Number.isNaN(elecBill)) result[bm].extra += elecBill;
+          if (!Number.isNaN(otherBill)) result[bm].extra += otherBill;
+        }
+      });
+
+      const payments = paymentsCache || [];
+      payments.forEach(p => {
+        const py = parseInt(p.year, 10);
+        const pm = parseInt(p.month, 10);
+        if (py !== year || Number.isNaN(pm) || !result[pm]) return;
+
+        result[pm].actualPaid += getPaymentAmount(p);
+      });
+
+      for (let m = 1; m <= 12; m++) {
+        result[m].totalExpected = result[m].rent + result[m].extra + result[m].deposit;
+        result[m].diff = result[m].totalExpected - result[m].actualPaid;
+      }
+
+      return result;
+    }
+
+    async function initSummary() {
+      const today = new Date();
 
       try {
         const [
@@ -505,6 +794,7 @@
             lease_duration,
             status,
             monthly_rent,
+            deposit,
             created_at,
             updated_at
           `).eq("rent_type", "monthly"),
@@ -512,24 +802,24 @@
         ]);
 
         if (roomErr) console.error("rooms error:", roomErr);
-        else rooms = roomRows || [];
-
         if (bookingErr) console.error("bookings error:", bookingErr);
-        else bookings = bookingRows || [];
-
         if (extraErr) console.error("extra_bills error:", extraErr);
-        else extraBills = extraRows || [];
 
+        roomsCache = roomRows || [];
+        bookingsCache = bookingRows || [];
+        extraBillsCache = extraRows || [];
       } catch (e) {
         console.error("initSummary exception:", e);
       }
 
-      const totalRooms = rooms.length > 0
-        ? rooms.length
-        : new Set(bookings.map(b => b.room_number).filter(Boolean)).size;
+      paymentsCache = await getAllPayments();
 
-      const activeRoomsArr = bookings.filter(t => t.status === "active");
-      const stoppedRoomsArr = bookings.filter(
+      const totalRooms = roomsCache.length > 0
+        ? roomsCache.length
+        : new Set(bookingsCache.map(b => b.room_number).filter(Boolean)).size;
+
+      const activeRoomsArr = bookingsCache.filter(t => t.status === "active");
+      const stoppedRoomsArr = bookingsCache.filter(
         t => t.status === "checked_out" || t.status === "deleted"
       );
 
@@ -537,18 +827,24 @@
       document.getElementById("activeRooms").textContent = String(activeRoomsArr.length);
       document.getElementById("stoppedRooms").textContent = String(stoppedRoomsArr.length);
 
-      const payments = await getAllPayments();
-
-      const totalIncome = payments.reduce((sum, p) => sum + getPaymentAmount(p), 0);
-      document.getElementById("totalIncome").textContent = formatMoney(totalIncome) + " บาท";
-
       const unpaidTableBody = document.querySelector("#unpaidTable tbody");
       unpaidTableBody.innerHTML = "";
+
+      let grandExpected = 0;
+      let grandPaid = 0;
       let grandUnpaid = 0;
 
-      activeRoomsArr.forEach(t => {
+      const allMonthlyBookings = [...bookingsCache].sort((a, b) => {
+        return String(a.room_number || "").localeCompare(String(b.room_number || ""), "th");
+      });
+
+      allMonthlyBookings.forEach(t => {
         const rent = parseFloat(t.monthly_rent || "0");
-        if (!rent || rent <= 0) return;
+        const roomNo = String(t.room_number || "").trim();
+        const tenantName = t.tenant_name || "-";
+        const depositAmount = Number(t.deposit ?? 3000) || 3000;
+
+        if (!roomNo) return;
 
         const startStr = t.checkin_date || "";
         if (!startStr) return;
@@ -556,131 +852,108 @@
         const startDate = new Date(startStr + "T00:00:00");
         if (isNaN(startDate.getTime())) return;
 
-        let endDate = new Date(today.getFullYear(), today.getMonth(), 1);
-
-        if (t.stopped_at) {
-          const stopped = new Date(String(t.stopped_at).split("T")[0] + "T00:00:00");
-          if (!isNaN(stopped.getTime())) {
-            const stoppedMonth = new Date(stopped.getFullYear(), stopped.getMonth(), 1);
-            if (stoppedMonth < endDate) endDate = stoppedMonth;
-          }
-        }
-
         const firstMonthDate = new Date(startDate.getFullYear(), startDate.getMonth(), 1);
+        const endDate = getBookingEndMonth(t, today);
+
         if (endDate < firstMonthDate) return;
 
         const monthsCount = countMonthsInclusive(firstMonthDate, endDate);
 
         let extraTotal = 0;
-        extraBills.forEach(b => {
-          if (String(b.room || "") !== String(t.room_number || "")) return;
+        extraBillsCache.forEach(b => {
+          if (String(b.room || "").trim() !== roomNo) return;
 
           const by = parseInt(b.year, 10);
           const bm = parseInt(b.month, 10);
-          if (isNaN(by) || isNaN(bm)) return;
+          if (Number.isNaN(by) || Number.isNaN(bm)) return;
 
           const billMonthDate = new Date(by, bm - 1, 1);
           if (billMonthDate < firstMonthDate || billMonthDate > endDate) return;
 
-          const waterBill = Number(b.water || b.water_bill || 0);
-          const elecBill = Number(b.electricity || b.electric || b.electric_bill || 0);
-          const otherBill = Number(b.other || b.other_bill || 0);
+          const totalField = Number(b.total || 0);
+          if (!Number.isNaN(totalField) && totalField > 0) {
+            extraTotal += totalField;
+          } else {
+            const waterBill = Number(b.water || b.water_bill || 0);
+            const elecBill = Number(b.electricity || b.electric || b.electric_bill || 0);
+            const otherBill = Number(b.other || b.other_bill || 0);
 
-          if (!Number.isNaN(waterBill)) extraTotal += waterBill;
-          if (!Number.isNaN(elecBill)) extraTotal += elecBill;
-          if (!Number.isNaN(otherBill)) extraTotal += otherBill;
+            if (!Number.isNaN(waterBill)) extraTotal += waterBill;
+            if (!Number.isNaN(elecBill)) extraTotal += elecBill;
+            if (!Number.isNaN(otherBill)) extraTotal += otherBill;
+          }
         });
 
-        const expectedTotal = rent * monthsCount + extraTotal;
+        const expectedTotal = (rent * monthsCount) + extraTotal + depositAmount;
 
         let paidTotal = 0;
-        payments.forEach(p => {
+        paymentsCache.forEach(p => {
           const payRoom = getPaymentRoom(p);
-          if (payRoom !== String(t.room_number || "")) return;
-
-          const py = parseInt(p.year, 10);
-          const pm = parseInt(p.month, 10);
-          if (isNaN(py) || isNaN(pm)) return;
-
-          const payMonthDate = new Date(py, pm - 1, 1);
-          if (payMonthDate > endDate) return;
-
+          if (payRoom !== roomNo) return;
           paidTotal += getPaymentAmount(p);
         });
 
         let unpaid = expectedTotal - paidTotal;
         if (unpaid < 0) unpaid = 0;
 
+        grandExpected += expectedTotal;
+        grandPaid += paidTotal;
         grandUnpaid += unpaid;
 
         const tr = document.createElement("tr");
-        const unpaidClass = unpaid > 0 ? "highlight-negative" : "";
         tr.innerHTML = `
-          <td>${t.room_number || ""}</td>
-          <td>${t.tenant_name || ""}</td>
+          <td>${roomNo}</td>
+          <td>${tenantName}</td>
+          <td>${t.status || "-"}</td>
           <td class="text-right">${formatMoney(rent)}</td>
           <td class="text-center">${monthsCount}</td>
+          <td class="text-right">${formatMoney(extraTotal)}</td>
+          <td class="text-right">${formatMoney(depositAmount)}</td>
           <td class="text-right">${formatMoney(expectedTotal)}</td>
           <td class="text-right">${formatMoney(paidTotal)}</td>
-          <td class="text-right ${unpaidClass}">${formatMoney(unpaid)}</td>
+          <td class="text-right ${unpaid > 0 ? "highlight-negative" : ""}">${formatMoney(unpaid)}</td>
+          <td class="text-center">${getStatusPill(expectedTotal, paidTotal, unpaid)}</td>
         `;
         unpaidTableBody.appendChild(tr);
       });
 
       if (!unpaidTableBody.hasChildNodes()) {
         const tr = document.createElement("tr");
-        tr.innerHTML = `<td colspan="7">ไม่มีข้อมูลห้องที่กำลังเช่า</td>`;
+        tr.innerHTML = `<td colspan="11">ไม่มีข้อมูลสัญญารายเดือน</td>`;
         unpaidTableBody.appendChild(tr);
       }
 
+      document.getElementById("totalExpected").textContent = formatMoney(grandExpected) + " บาท";
+      document.getElementById("totalIncome").textContent = formatMoney(grandPaid) + " บาท";
       document.getElementById("totalUnpaid").textContent = formatMoney(grandUnpaid) + " บาท";
 
-      const yearInput = document.getElementById("yearInput");
-      yearInput.value = today.getFullYear();
-      await renderMonthlyIncome();
+      document.getElementById("yearInput").value = today.getFullYear();
+      await renderYearlySections();
     }
 
     async function renderMonthlyIncome() {
       const tbody = document.querySelector("#monthlyTable tbody");
       tbody.innerHTML = "";
 
-      const yearStr = document.getElementById("yearInput").value.trim();
-      if (!yearStr) {
+      const year = getSelectedYear();
+      if (!year) {
         const tr = document.createElement("tr");
-        tr.innerHTML = `<td colspan="2">กรุณาใส่ปีเพื่อดูรายได้รายเดือน</td>`;
+        tr.innerHTML = `<td colspan="2">กรุณาใส่ปีให้ถูกต้อง</td>`;
         tbody.appendChild(tr);
         return;
       }
 
-      const year = parseInt(yearStr, 10);
-      if (isNaN(year)) {
-        const tr = document.createElement("tr");
-        tr.innerHTML = `<td colspan="2">รูปแบบปีไม่ถูกต้อง</td>`;
-        tbody.appendChild(tr);
-        return;
-      }
-
-      const payments = await getAllPayments();
       const monthlySum = {};
-
       for (let m = 1; m <= 12; m++) monthlySum[m] = 0;
 
-      payments.forEach(p => {
+      paymentsCache.forEach(p => {
         const py = parseInt(p.year, 10);
         const pm = parseInt(p.month, 10);
-        if (py !== year || isNaN(pm)) return;
-
-        const amt = getPaymentAmount(p);
-        if (monthlySum[pm] !== undefined) {
-          monthlySum[pm] += amt;
-        }
+        if (py !== year || Number.isNaN(pm) || !monthlySum[pm] && monthlySum[pm] !== 0) return;
+        monthlySum[pm] += getPaymentAmount(p);
       });
 
       let totalYearIncome = 0;
-      const monthNames = [
-        "", "มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน",
-        "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"
-      ];
 
       for (let m = 1; m <= 12; m++) {
         const val = monthlySum[m] || 0;
@@ -688,7 +961,7 @@
 
         const tr = document.createElement("tr");
         tr.innerHTML = `
-          <td>${monthNames[m]} (${String(m).padStart(2, "0")})</td>
+          <td>${getMonthName(m)}</td>
           <td class="text-right">${formatMoney(val)}</td>
         `;
         tbody.appendChild(tr);
@@ -700,6 +973,163 @@
         <th class="text-right">${formatMoney(totalYearIncome)}</th>
       `;
       tbody.appendChild(trTotal);
+    }
+
+    function renderMonthlyExpectedTable() {
+      const tbody = document.querySelector("#monthlyExpectedTable tbody");
+      tbody.innerHTML = "";
+
+      const year = getSelectedYear();
+      if (!year) {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `<td colspan="7">กรุณาใส่ปีให้ถูกต้อง</td>`;
+        tbody.appendChild(tr);
+        return;
+      }
+
+      const expectedMap = buildExpectedPerMonth(year);
+
+      let sumRent = 0;
+      let sumExtra = 0;
+      let sumDeposit = 0;
+      let sumExpected = 0;
+      let sumPaid = 0;
+      let sumDiff = 0;
+
+      for (let m = 1; m <= 12; m++) {
+        const row = expectedMap[m];
+
+        sumRent += row.rent;
+        sumExtra += row.extra;
+        sumDeposit += row.deposit;
+        sumExpected += row.totalExpected;
+        sumPaid += row.actualPaid;
+        sumDiff += row.diff;
+
+        const diffClass = row.diff > 0 ? "highlight-negative" : (row.diff < 0 ? "highlight-positive" : "");
+
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${getMonthName(m)}</td>
+          <td class="text-right">${formatMoney(row.rent)}</td>
+          <td class="text-right">${formatMoney(row.extra)}</td>
+          <td class="text-right">${formatMoney(row.deposit)}</td>
+          <td class="text-right">${formatMoney(row.totalExpected)}</td>
+          <td class="text-right">${formatMoney(row.actualPaid)}</td>
+          <td class="text-right ${diffClass}">${formatMoney(row.diff)}</td>
+        `;
+        tbody.appendChild(tr);
+      }
+
+      const trTotal = document.createElement("tr");
+      trTotal.innerHTML = `
+        <th>รวมทั้งปี ${year}</th>
+        <th class="text-right">${formatMoney(sumRent)}</th>
+        <th class="text-right">${formatMoney(sumExtra)}</th>
+        <th class="text-right">${formatMoney(sumDeposit)}</th>
+        <th class="text-right">${formatMoney(sumExpected)}</th>
+        <th class="text-right">${formatMoney(sumPaid)}</th>
+        <th class="text-right">${formatMoney(sumDiff)}</th>
+      `;
+      tbody.appendChild(trTotal);
+    }
+
+    function renderPaymentTypeExpectedTable() {
+      const tbody = document.querySelector("#paymentTypeExpectedTable tbody");
+      tbody.innerHTML = "";
+
+      const year = getSelectedYear();
+      if (!year) {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `<td colspan="2">กรุณาใส่ปีให้ถูกต้อง</td>`;
+        tbody.appendChild(tr);
+        return;
+      }
+
+      const expectedMap = buildExpectedPerMonth(year);
+
+      let totalRent = 0;
+      let totalExtra = 0;
+      let totalDeposit = 0;
+
+      for (let m = 1; m <= 12; m++) {
+        totalRent += expectedMap[m].rent;
+        totalExtra += expectedMap[m].extra;
+        totalDeposit += expectedMap[m].deposit;
+      }
+
+      const rows = [
+        { label: "ค่าเช่า", amount: totalRent },
+        { label: "ค่าใช้จ่ายเพิ่มเติม", amount: totalExtra },
+        { label: "เงินประกัน", amount: totalDeposit },
+        { label: `รวมทั้งปี ${year}`, amount: totalRent + totalExtra + totalDeposit }
+      ];
+
+      rows.forEach((r, index) => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = index === rows.length - 1
+          ? `<th>${r.label}</th><th class="text-right">${formatMoney(r.amount)}</th>`
+          : `<td>${r.label}</td><td class="text-right">${formatMoney(r.amount)}</td>`;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function renderPaymentMethodTable() {
+      const tbody = document.querySelector("#paymentMethodTable tbody");
+      tbody.innerHTML = "";
+
+      const year = getSelectedYear();
+      if (!year) {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `<td colspan="2">กรุณาใส่ปีให้ถูกต้อง</td>`;
+        tbody.appendChild(tr);
+        return;
+      }
+
+      const methodMap = {};
+
+      paymentsCache.forEach(p => {
+        const py = parseInt(p.year, 10);
+        if (py !== year) return;
+
+        const methodName = getPaymentMethodName(p);
+        if (!methodMap[methodName]) methodMap[methodName] = 0;
+        methodMap[methodName] += getPaymentAmount(p);
+      });
+
+      const entries = Object.entries(methodMap).sort((a, b) => b[1] - a[1]);
+
+      if (!entries.length) {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `<td colspan="2">ไม่มีข้อมูลการชำระเงินจริงในปีนี้</td>`;
+        tbody.appendChild(tr);
+        return;
+      }
+
+      let total = 0;
+      entries.forEach(([method, amount]) => {
+        total += amount;
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${method}</td>
+          <td class="text-right">${formatMoney(amount)}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      const trTotal = document.createElement("tr");
+      trTotal.innerHTML = `
+        <th>รวมยอดจ่ายจริงทั้งปี ${year}</th>
+        <th class="text-right">${formatMoney(total)}</th>
+      `;
+      tbody.appendChild(trTotal);
+    }
+
+    async function renderYearlySections() {
+      await renderMonthlyIncome();
+      renderMonthlyExpectedTable();
+      renderPaymentTypeExpectedTable();
+      renderPaymentMethodTable();
     }
 
     document.addEventListener("DOMContentLoaded", () => {

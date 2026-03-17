@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ประวัติห้องรายเดือน</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    :root {
+      --bg: #f6efe8;
+      --card: #fffdfa;
+      --card-soft: #fcf7f2;
+      --line: #e8d7c8;
+      --text: #5f3719;
+      --subtext: #8a6a54;
+      --primary: #a66a2b;
+      --primary-dark: #8d5720;
+      --green-bg: #eaf7ee;
+      --green-text: #1b7f3b;
+      --red-bg: #fff1f0;
+      --red-text: #b42318;
+      --blue-bg: #eef4ff;
+      --blue-text: #1d4ed8;
+      --warn-bg: #fff6e8;
+      --warn-text: #b76a00;
+      --shadow: 0 6px 18px rgba(107, 59, 28, 0.06);
+      --radius: 14px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Prompt", Arial, sans-serif;
+      background: linear-gradient(180deg, #f4eee7 0%, #f8f4f0 100%);
+      color: var(--text);
+    }
+
+    .page {
+      max-width: 1220px;
+      margin: 0 auto;
+      padding: 18px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+
+    .title-wrap h1 {
+      margin: 0;
+      font-size: 25px;
+      line-height: 1.2;
+      color: #7b4a23;
+      font-weight: 800;
+    }
+
+    .title-wrap p {
+      margin: 4px 0 0;
+      color: var(--subtext);
+      font-size: 13px;
+    }
+
+    .top-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      border: none;
+      border-radius: 999px;
+      padding: 9px 15px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: 0.16s ease;
+      font-family: inherit;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-dark);
+      transform: translateY(-1px);
+    }
+
+    .btn-light {
+      background: #fff;
+      color: var(--text);
+      border: 1px solid var(--line);
+    }
+
+    .btn-light:hover {
+      background: #f8efe7;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 15px;
+      box-shadow: var(--shadow);
+      margin-bottom: 14px;
+    }
+
+    .card.soft {
+      background: var(--card-soft);
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+    }
+
+    .section-title {
+      margin: 0;
+      font-size: 17px;
+      color: #7b4a23;
+      font-weight: 800;
+    }
+
+    .section-note {
+      font-size: 12px;
+      color: var(--subtext);
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(240px, 1fr));
+      gap: 10px;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(130px, 1fr));
+      gap: 10px;
+    }
+
+    .info-box,
+    .summary-box {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 11px 12px;
+    }
+
+    .info-label,
+    .summary-box .label {
+      font-size: 11px;
+      color: var(--subtext);
+      margin-bottom: 4px;
+    }
+
+    .info-value {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+      word-break: break-word;
+      line-height: 1.35;
+    }
+
+    .summary-box .value {
+      font-size: 21px;
+      font-weight: 800;
+      color: var(--primary);
+      line-height: 1.1;
+    }
+
+    .summary-box.deposit .value {
+      color: var(--blue-text);
+    }
+
+    .summary-box.remain .value {
+      color: var(--red-text);
+    }
+
+    .mini {
+      margin-top: 6px;
+      font-size: 11px;
+      color: var(--subtext);
+      line-height: 1.35;
+    }
+
+    .status-text {
+      margin-top: 8px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .status-ok {
+      color: var(--green-text);
+    }
+
+    .status-error {
+      color: var(--red-text);
+    }
+
+    .hint-box {
+      background: #fff;
+      border: 1px dashed #d9bea5;
+      border-radius: 12px;
+      padding: 11px 13px;
+      color: #7a5638;
+      font-size: 13px;
+      line-height: 1.55;
+      margin-bottom: 14px;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #fff;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #fff;
+      min-width: 980px;
+    }
+
+    th, td {
+      padding: 9px 8px;
+      border-bottom: 1px solid #efdfd0;
+      text-align: left;
+      vertical-align: top;
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    th {
+      background: #f7ebdf;
+      color: #7b4a23;
+      font-weight: 700;
+      white-space: nowrap;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+
+    tr:hover td {
+      background: #fffaf6;
+    }
+
+    .money {
+      font-weight: 700;
+      color: #7b4a23;
+      white-space: nowrap;
+    }
+
+    .note {
+      white-space: pre-wrap;
+      color: #6b4a35;
+      line-height: 1.45;
+    }
+
+    .empty {
+      text-align: center;
+      color: var(--subtext);
+      padding: 18px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 9px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .pill-success {
+      background: var(--green-bg);
+      color: var(--green-text);
+    }
+
+    .pill-danger {
+      background: var(--red-bg);
+      color: var(--red-text);
+    }
+
+    .pill-info {
+      background: var(--blue-bg);
+      color: var(--blue-text);
+    }
+
+    .pill-warning {
+      background: var(--warn-bg);
+      color: var(--warn-text);
+    }
+
+    @media (max-width: 1080px) {
+      .grid-2,
+      .summary-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .grid-2,
+      .summary-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .title-wrap h1 {
+        font-size: 22px;
+      }
+
+      .page {
+        padding: 12px;
+      }
+    }
+
+    @media print {
+      body {
+        background: #fff;
+      }
+
+      .page {
+        max-width: 100%;
+        padding: 0;
+      }
+
+      .top-actions,
+      .hint-box,
+      .status-text {
+        display: none !important;
+      }
+
+      .card {
+        box-shadow: none;
+        border: 1px solid #ddd;
+        break-inside: avoid;
+      }
+
+      th {
+        position: static;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="topbar">
+      <div class="title-wrap">
+        <h1>ประวัติห้องรายเดือน</h1>
+        <p id="pageSubtitle">กำลังโหลดข้อมูล...</p>
+      </div>
+
+      <div class="top-actions">
+        <button class="btn btn-light" onclick="window.print()">🖨️ พิมพ์</button>
+        <button class="btn btn-primary" onclick="history.back()">← กลับ</button>
+      </div>
+    </div>
+
+    <div class="card soft">
+      <div class="section-header">
+        <h2 class="section-title">ข้อมูลสัญญา / ผู้เช่า</h2>
+      </div>
+      <div id="bookingInfo" class="grid-2"></div>
+      <div id="bookingStatus" class="status-text"></div>
+    </div>
+
+    <div class="card">
+      <div class="section-header">
+        <h2 class="section-title">สรุปยอดรวม</h2>
+        <div class="section-note">ตัดเงินประกันก่อน แล้วค่อยตัดเดือนเก่าสุด</div>
+      </div>
+
+      <div class="summary-grid">
+        <div class="summary-box">
+          <div class="label">ค่าเช่ารวม</div>
+          <div class="value" id="sumRent">0.00</div>
+        </div>
+        <div class="summary-box">
+          <div class="label">ค่าใช้จ่ายเพิ่ม</div>
+          <div class="value" id="sumExtra">0.00</div>
+        </div>
+        <div class="summary-box deposit">
+          <div class="label">เงินประกัน</div>
+          <div class="value" id="sumDeposit">0.00</div>
+          <div id="depositStatusText" class="mini"></div>
+        </div>
+        <div class="summary-box deposit">
+          <div class="label">หักเข้าเงินประกัน</div>
+          <div class="value" id="sumDepositUsed">0.00</div>
+        </div>
+        <div class="summary-box">
+          <div class="label">จ่ายเข้าค่าเช่าแล้ว</div>
+          <div class="value" id="sumPaid">0.00</div>
+        </div>
+        <div class="summary-box remain">
+          <div class="label">ยอดคงเหลือ</div>
+          <div class="value" id="sumRemain">0.00</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hint-box">
+      ระบบจะนำยอดจาก <strong>payments.amount</strong> ไปหัก <strong>เงินประกันก่อน</strong>
+      และเมื่อเงินประกันครบแล้ว จึงนำยอดที่เหลือไปตัด <strong>เดือนที่เก่าที่สุด → เดือนล่าสุด</strong>
+    </div>
+
+    <div class="card">
+      <div class="section-header">
+        <h2 class="section-title">ค่าใช้จ่ายเพิ่มเติม</h2>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>ปี/เดือน</th>
+              <th>ค่าน้ำ</th>
+              <th>หมายเหตุ</th>
+              <th>ค่าไฟ</th>
+              <th>หมายเหตุ</th>
+              <th>ค่าอื่น</th>
+              <th>หมายเหตุ</th>
+              <th>รวม</th>
+              <th>อัปเดต</th>
+            </tr>
+          </thead>
+          <tbody id="extraBillsBody">
+            <tr><td colspan="9" class="empty">กำลังโหลด...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-header">
+        <h2 class="section-title">รายการชำระเงิน</h2>
+        <div class="section-note">ยอดที่จ่ายจริงจากตาราง payments</div>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>วันที่ชำระ</th>
+              <th>เดือนที่บันทึก</th>
+              <th>ยอดจ่าย</th>
+              <th>วิธีชำระ</th>
+              <th>รายละเอียด</th>
+              <th>หมายเหตุ</th>
+            </tr>
+          </thead>
+          <tbody id="paymentsBody">
+            <tr><td colspan="6" class="empty">กำลังโหลด...</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div id="paymentHint" class="status-text"></div>
+    </div>
+
+    <div class="card">
+      <div class="section-header">
+        <h2 class="section-title">สรุปรายเดือน</h2>
+        <div class="section-note">ตัดเก่าไปใหม่</div>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>ปี/เดือน</th>
+              <th>ค่าเช่า</th>
+              <th>ค่าน้ำ/ไฟ/อื่น</th>
+              <th>รวมที่ต้องจ่าย</th>
+              <th>หักจากเงินประกัน</th>
+              <th>ชำระเข้าค่าเช่า</th>
+              <th>คงเหลือ</th>
+              <th>สถานะ</th>
+            </tr>
+          </thead>
+          <tbody id="monthlySummaryBody">
+            <tr><td colspan="8" class="empty">กำลังโหลด...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const SUPABASE_URL = "https://muebjorbqxuppzaixykg.supabase.co";
+    const SUPABASE_ANON_KEY = "sb_publishable_mybDlaBdUg9SN8nems0_Cg_QiVdgwY_";
+    const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    const params = new URLSearchParams(window.location.search);
+    const room = params.get("room") || "";
+
+    const bookingInfo = document.getElementById("bookingInfo");
+    const bookingStatus = document.getElementById("bookingStatus");
+    const extraBillsBody = document.getElementById("extraBillsBody");
+    const paymentsBody = document.getElementById("paymentsBody");
+    const monthlySummaryBody = document.getElementById("monthlySummaryBody");
+    const pageSubtitle = document.getElementById("pageSubtitle");
+    const paymentHint = document.getElementById("paymentHint");
+
+    const sumRentEl = document.getElementById("sumRent");
+    const sumExtraEl = document.getElementById("sumExtra");
+    const sumDepositEl = document.getElementById("sumDeposit");
+    const sumDepositUsedEl = document.getElementById("sumDepositUsed");
+    const sumPaidEl = document.getElementById("sumPaid");
+    const sumRemainEl = document.getElementById("sumRemain");
+    const depositStatusText = document.getElementById("depositStatusText");
+
+    let currentBooking = null;
+    let extraBills = [];
+    let payments = [];
+    let depositPaidAmount = 0;
+
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function money(value) {
+      return Number(value || 0).toLocaleString("th-TH", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      });
+    }
+
+    function num(value) {
+      const n = Number(value);
+      return Number.isFinite(n) ? n : 0;
+    }
+
+    function dateText(value) {
+      if (!value) return "-";
+      const d = new Date(value);
+      if (Number.isNaN(d.getTime())) return value;
+      return d.toLocaleString("th-TH");
+    }
+
+    function monthKey(year, month) {
+      return `${year}-${String(month).padStart(2, "0")}`;
+    }
+
+    function parseDateOnly(value) {
+      if (!value) return null;
+      const d = new Date(value);
+      if (Number.isNaN(d.getTime())) return null;
+      return d;
+    }
+
+    function buildMonthRange(startDate, endDate) {
+      const result = [];
+      if (!startDate) return result;
+
+      const start = new Date(startDate.getFullYear(), startDate.getMonth(), 1);
+      let end;
+
+      if (endDate) {
+        end = new Date(endDate.getFullYear(), endDate.getMonth(), 1);
+      } else {
+        const today = new Date();
+        end = new Date(today.getFullYear(), today.getMonth(), 1);
+      }
+
+      const cur = new Date(start);
+      while (cur <= end) {
+        result.push({
+          year: cur.getFullYear(),
+          month: cur.getMonth() + 1
+        });
+        cur.setMonth(cur.getMonth() + 1);
+      }
+      return result;
+    }
+
+    function getDepositStatusHtml(paidAmount, depositAmount) {
+      if (depositAmount <= 0) {
+        return `<span class="pill pill-info">ไม่มีเงินประกัน</span>`;
+      }
+      if (paidAmount >= depositAmount) {
+        return `<span class="pill pill-success">จ่ายครบแล้ว</span>`;
+      }
+      if (paidAmount > 0) {
+        return `<span class="pill pill-warning">จ่ายบางส่วน ${money(paidAmount)} / ${money(depositAmount)}</span>`;
+      }
+      return `<span class="pill pill-danger">ยังไม่จ่าย</span>`;
+    }
+
+    function renderBookingInfo(booking) {
+      if (!booking) {
+        bookingInfo.innerHTML = `<div class="empty">ไม่พบข้อมูลสัญญาของห้องนี้</div>`;
+        bookingStatus.className = "status-text status-error";
+        bookingStatus.textContent = "ไม่พบข้อมูลจากตาราง bookings";
+        return;
+      }
+
+      const deposit = num(booking.deposit || 3000);
+
+      bookingInfo.innerHTML = `
+        <div class="info-box"><div class="info-label">เลขห้อง</div><div class="info-value">${escapeHtml(booking.room_number || booking.room || "-")}</div></div>
+        <div class="info-box"><div class="info-label">ชื่อผู้เช่า</div><div class="info-value">${escapeHtml(booking.tenant_name || booking.guest_name || "-")}</div></div>
+        <div class="info-box"><div class="info-label">เบอร์ติดต่อ</div><div class="info-value">${escapeHtml(booking.phone || "-")}</div></div>
+        <div class="info-box"><div class="info-label">เลขบัตร / พาสปอร์ต</div><div class="info-value">${escapeHtml(booking.id_number || "-")}</div></div>
+        <div class="info-box"><div class="info-label">วันที่เริ่มเช่า</div><div class="info-value">${escapeHtml(booking.checkin_date || booking.start_date || "-")}</div></div>
+        <div class="info-box"><div class="info-label">ระยะเวลาเช่า</div><div class="info-value">${booking.lease_duration != null ? escapeHtml(booking.lease_duration) + " เดือน" : "-"}</div></div>
+        <div class="info-box"><div class="info-label">ค่าเช่าต่อเดือน</div><div class="info-value">${money(booking.monthly_rent)}</div></div>
+        <div class="info-box"><div class="info-label">เงินประกัน</div><div class="info-value">${money(deposit)} ${getDepositStatusHtml(depositPaidAmount, deposit)}</div></div>
+        <div class="info-box"><div class="info-label">สถานะสัญญา</div><div class="info-value">${escapeHtml(booking.status || "-")}</div></div>
+        <div class="info-box"><div class="info-label">สิ้นสุดสัญญา / หยุดเช่า</div><div class="info-value">${escapeHtml(booking.stopped_at || booking.checkout_date || "-")}</div></div>
+      `;
+
+      bookingStatus.className = "status-text status-ok";
+      bookingStatus.textContent = "โหลดข้อมูลสัญญาสำเร็จ";
+    }
+
+    async function loadBooking() {
+      const { data, error } = await db
+        .from("bookings")
+        .select("*")
+        .eq("room_number", room)
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      if (error) {
+        console.error("loadBooking error:", error);
+        currentBooking = null;
+        renderBookingInfo(null);
+        return;
+      }
+
+      currentBooking = data || null;
+    }
+
+    async function loadExtraBills() {
+      const { data, error } = await db
+        .from("extra_bills")
+        .select("*")
+        .eq("room", room)
+        .order("year", { ascending: true })
+        .order("month", { ascending: true });
+
+      if (error) {
+        console.error("loadExtraBills error:", error);
+        extraBillsBody.innerHTML = `
+          <tr><td colspan="9" class="empty">โหลด extra_bills ไม่สำเร็จ: ${escapeHtml(error.message)}</td></tr>
+        `;
+        extraBills = [];
+        return;
+      }
+
+      extraBills = data || [];
+
+      if (!extraBills.length) {
+        extraBillsBody.innerHTML = `<tr><td colspan="9" class="empty">ไม่มีข้อมูลค่าใช้จ่ายเพิ่มเติม</td></tr>`;
+        return;
+      }
+
+      extraBillsBody.innerHTML = extraBills.map(row => `
+        <tr>
+          <td>${row.month}/${row.year}</td>
+          <td class="money">${money(row.water)}</td>
+          <td class="note">${escapeHtml(row.water_note || "-")}</td>
+          <td class="money">${money(row.electricity)}</td>
+          <td class="note">${escapeHtml(row.electricity_note || "-")}</td>
+          <td class="money">${money(row.other)}</td>
+          <td class="note">${escapeHtml(row.other_note || "-")}</td>
+          <td class="money">${money(row.total)}</td>
+          <td>${dateText(row.updated_at)}</td>
+        </tr>
+      `).join("");
+    }
+
+    async function loadPayments() {
+      const { data, error } = await db
+        .from("payments")
+        .select("*")
+        .eq("room_number", room)
+        .order("paid_at", { ascending: true })
+        .order("created_at", { ascending: true });
+
+      if (error) {
+        console.error("loadPayments error:", error);
+        paymentsBody.innerHTML = `
+          <tr><td colspan="6" class="empty">โหลดข้อมูลชำระเงินไม่สำเร็จ: ${escapeHtml(error.message)}</td></tr>
+        `;
+        paymentHint.className = "status-text status-error";
+        paymentHint.textContent = "ไม่สามารถโหลดข้อมูลจากตาราง payments ได้";
+        payments = [];
+        depositPaidAmount = 0;
+        return;
+      }
+
+      payments = data || [];
+
+      if (!payments.length) {
+        paymentsBody.innerHTML = `<tr><td colspan="6" class="empty">ยังไม่มีข้อมูลการชำระเงิน</td></tr>`;
+        paymentHint.className = "status-text status-ok";
+        paymentHint.textContent = "ยังไม่มีรายการชำระเงินจริงในห้องนี้";
+        depositPaidAmount = 0;
+        return;
+      }
+
+      paymentsBody.innerHTML = payments.map(p => `
+        <tr>
+          <td>${dateText(p.paid_at || p.created_at)}</td>
+          <td>${escapeHtml((p.month && p.year) ? `${p.month}/${p.year}` : "-")}</td>
+          <td class="money">${money(p.amount)}</td>
+          <td>${escapeHtml(p.payment_method || p.method || "-")}</td>
+          <td class="note">${escapeHtml(p.payment_detail || "-")}</td>
+          <td class="note">${escapeHtml(p.note || "-")}</td>
+        </tr>
+      `).join("");
+
+      paymentHint.className = "status-text status-ok";
+      paymentHint.textContent = "โหลดข้อมูลการชำระเงินสำเร็จ";
+    }
+
+    function buildMonthlySummary() {
+      const rentPerMonth = num(currentBooking?.monthly_rent);
+      const depositAmount = num(currentBooking?.deposit || 3000);
+      const startDate = parseDateOnly(currentBooking?.checkin_date || currentBooking?.start_date);
+      const endDate = parseDateOnly(currentBooking?.stopped_at || currentBooking?.checkout_date);
+
+      let months = buildMonthRange(startDate, endDate);
+
+      if (!months.length) {
+        const keys = new Set();
+        extraBills.forEach(x => keys.add(monthKey(x.year, x.month)));
+        payments.forEach(p => {
+          if (p.year && p.month) keys.add(monthKey(p.year, p.month));
+        });
+
+        months = Array.from(keys).sort().map(k => {
+          const [year, month] = k.split("-");
+          return { year: Number(year), month: Number(month) };
+        });
+      }
+
+      if (!months.length) {
+        monthlySummaryBody.innerHTML = `<tr><td colspan="8" class="empty">ไม่มีข้อมูลเพียงพอสำหรับสรุปรายเดือน</td></tr>`;
+        updateSummaryCards([], depositAmount, 0, 0);
+        return;
+      }
+
+      const extraMap = {};
+      extraBills.forEach(x => {
+        extraMap[monthKey(x.year, x.month)] = num(x.total);
+      });
+
+      const rows = months.map(m => {
+        const key = monthKey(m.year, m.month);
+        const rent = rentPerMonth;
+        const extra = extraMap[key] || 0;
+        const shouldPay = rent + extra;
+
+        return {
+          year: m.year,
+          month: m.month,
+          key,
+          rent,
+          extra,
+          shouldPay,
+          depositUsed: 0,
+          paid: 0,
+          remain: shouldPay
+        };
+      });
+
+      const sortedPayments = [...payments].sort((a, b) => {
+        const da = new Date(a.paid_at || a.created_at || 0).getTime();
+        const db = new Date(b.paid_at || b.created_at || 0).getTime();
+        return da - db;
+      });
+
+      let depositRemain = depositAmount;
+      let depositUsedTotal = 0;
+
+      for (const p of sortedPayments) {
+        let amountLeft = num(p.amount);
+        if (amountLeft <= 0) continue;
+
+        if (depositRemain > 0) {
+          const toDeposit = Math.min(amountLeft, depositRemain);
+          depositRemain -= toDeposit;
+          depositUsedTotal += toDeposit;
+          amountLeft -= toDeposit;
+        }
+
+        if (amountLeft <= 0) continue;
+
+        for (const row of rows) {
+          if (amountLeft <= 0) break;
+          if (row.remain <= 0) continue;
+
+          const deduct = Math.min(row.remain, amountLeft);
+          row.paid += deduct;
+          row.remain -= deduct;
+          amountLeft -= deduct;
+        }
+      }
+
+      depositPaidAmount = depositUsedTotal;
+
+      monthlySummaryBody.innerHTML = rows.map(r => `
+        <tr>
+          <td>${r.month}/${r.year}</td>
+          <td class="money">${money(r.rent)}</td>
+          <td class="money">${money(r.extra)}</td>
+          <td class="money">${money(r.shouldPay)}</td>
+          <td class="money">${money(r.depositUsed)}</td>
+          <td class="money">${money(r.paid)}</td>
+          <td class="money">${money(r.remain)}</td>
+          <td>
+            ${
+              r.remain <= 0
+                ? `<span class="pill pill-success">จ่ายครบ</span>`
+                : r.paid > 0
+                  ? `<span class="pill pill-info">จ่ายบางส่วน</span>`
+                  : `<span class="pill pill-danger">ค้างชำระ</span>`
+            }
+          </td>
+        </tr>
+      `).join("");
+
+      updateSummaryCards(rows, depositAmount, depositUsedTotal, depositRemain);
+      renderBookingInfo(currentBooking);
+
+      paymentHint.className = "status-text status-ok";
+      paymentHint.textContent =
+        depositUsedTotal >= depositAmount
+          ? "เงินประกันครบแล้ว และยอดส่วนที่เหลือตัดเข้าเดือนเก่าสุดเรียบร้อย"
+          : `ระบบกำลังหักเข้าเงินประกันก่อน ขาดอีก ${money(depositRemain)} บาท`;
+    }
+
+    function updateSummaryCards(rows, depositAmount, depositUsedTotal, depositRemain) {
+      const totalRent = rows.reduce((s, r) => s + r.rent, 0);
+      const totalExtra = rows.reduce((s, r) => s + r.extra, 0);
+      const totalPaid = rows.reduce((s, r) => s + r.paid, 0);
+      const totalRemain = rows.reduce((s, r) => s + r.remain, 0);
+
+      sumRentEl.textContent = money(totalRent);
+      sumExtraEl.textContent = money(totalExtra);
+      sumDepositEl.textContent = money(depositAmount);
+      sumDepositUsedEl.textContent = money(depositUsedTotal);
+      sumPaidEl.textContent = money(totalPaid);
+      sumRemainEl.textContent = money(totalRemain);
+
+      if (depositAmount <= 0) {
+        depositStatusText.innerHTML = `<span class="pill pill-info">ไม่มีเงินประกัน</span>`;
+      } else if (depositUsedTotal >= depositAmount) {
+        depositStatusText.innerHTML = `<span class="pill pill-success">จ่ายครบแล้ว</span>`;
+      } else if (depositUsedTotal > 0) {
+        depositStatusText.innerHTML = `<span class="pill pill-warning">จ่ายบางส่วน ขาดอีก ${money(depositRemain)}</span>`;
+      } else {
+        depositStatusText.innerHTML = `<span class="pill pill-danger">ยังไม่จ่าย</span>`;
+      }
+    }
+
+    async function init() {
+      if (!room) {
+        pageSubtitle.textContent = "ไม่พบเลขห้องจาก URL";
+        bookingInfo.innerHTML = `<div class="empty">กรุณาเปิดหน้านี้ผ่านปุ่มประวัติของห้อง</div>`;
+        return;
+      }
+
+      pageSubtitle.textContent = `เลขห้อง ${room}`;
+
+      await loadBooking();
+      await loadPayments();
+      await loadExtraBills();
+      buildMonthlySummary();
+    }
+
+    init();
+  </script>
+</body>
+</html>
